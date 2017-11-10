@@ -25,6 +25,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
+            //do location distance check
             showNotification(remoteMessage.getData().get("name"), remoteMessage.getData().get("bloodGroup"),remoteMessage.getData().get("phone"),remoteMessage.getData().get("location"));
         }
 
