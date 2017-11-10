@@ -8,6 +8,7 @@ package com.example.asifsabir.blooddonor;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -18,12 +19,13 @@ import android.support.v4.app.NotificationCompat;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            showNotification(remoteMessage.getData().get("name"), remoteMessage.getData().get("bloodGroup"),remoteMessage.getData().get("location"));
+            showNotification(remoteMessage.getData().get("name"), remoteMessage.getData().get("bloodGroup"),remoteMessage.getData().get("phone"),remoteMessage.getData().get("location"));
         }
 
         // Check if message contains a notification payload.
@@ -32,8 +34,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-    private void showNotification(String name, String bloodGroup,String location) {
-        Intent intent = new Intent(this, MainActivity.class);
+    private void showNotification(String name, String bloodGroup,String phone, String location) {
+        Intent intent = new Intent(this, ShowRequest.class);
+
+        intent.putExtra("name",name);
+        intent.putExtra("bloodGroup",bloodGroup);
+        intent.putExtra("phone",phone);
+        intent.putExtra("location",location);
+
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
@@ -51,5 +59,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+
+
     }
 }
