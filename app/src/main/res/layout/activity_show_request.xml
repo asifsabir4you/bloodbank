@@ -13,9 +13,10 @@
         android:background="@drawable/blood_group_background"
         android:gravity="center_vertical|center_horizontal"
         android:padding="10dp"
+        android:textStyle="bold"
         android:text="X+"
         android:textColor="@android:color/white"
-        android:textSize="40dp" />
+        android:textSize="45dp" />
 
     <LinearLayout
         android:layout_marginTop="20dp"
