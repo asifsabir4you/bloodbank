@@ -22,15 +22,12 @@ public class ShowRequest extends AppCompatActivity {
 
     TextView nametext, bloodGroupText, phoneText, locationText;
     ImageButton callActionButton;
+    public static String phone;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_request);
 
-        //checking permissions
-        if (Build.VERSION.SDK_INT >= 23) {
-            permissionCheck();
-        }
 
         nametext = (TextView) findViewById(R.id.name);
         bloodGroupText = (TextView) findViewById(R.id.blood_group);
@@ -40,7 +37,7 @@ public class ShowRequest extends AppCompatActivity {
         Intent intent = getIntent();
         String name = intent.getStringExtra("name");
         String bloodGroup = intent.getStringExtra("bloodGroup");
-        final String phone = intent.getStringExtra("phone");
+        phone = intent.getStringExtra("phone");
         String location = intent.getStringExtra("location");
 
         nametext.setText(name);
@@ -51,22 +48,57 @@ public class ShowRequest extends AppCompatActivity {
         callActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeCall(phone);
+                //check permission and calling will be done in permission method
+                permissionCheck();
             }
         });
 
     }
 
-//method for onclick of call image button
-public void makeCall(String number) {
-    Intent callIntent = new Intent(Intent.ACTION_CALL);
-    callIntent.setData(Uri.parse("tel:" + number));
-    startActivity(Intent.createChooser(callIntent, "Choose dialing client..."));
-}
+    //method for making call
+    public void makeCall(String number) {
+
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.setData(Uri.parse("tel:" + number));
+        startActivity(Intent.createChooser(callIntent, "Choose dialing client..."));
+
+    }
 
     public void permissionCheck() {
-        if (ContextCompat.checkSelfPermission(ShowRequest.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(ShowRequest.this, new String[]{android.Manifest.permission.CALL_PHONE}, 1); //1 for phone call
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(ShowRequest.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(ShowRequest.this, new String[]{android.Manifest.permission.CALL_PHONE}, 1); //1 for phone call
+            } else {
+
+                makeCall(phone);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    makeCall(phone);
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(getApplicationContext(), "Please allow permission to make calls.", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
         }
     }
 }
