@@ -25,6 +25,9 @@
 
         <activity android:name=".ShowRequest">
         </activity>
+        <activity android:name=".MakeRequest">
+
+        </activity>
     </application>
 
 </manifest>

@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ public class ShowRequest extends AppCompatActivity {
     TextView nametext, bloodGroupText, phoneText, locationText;
     ImageButton callActionButton;
     public static String phone;
+    Button btnSaveReq;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +36,7 @@ public class ShowRequest extends AppCompatActivity {
         phoneText = (TextView) findViewById(R.id.phone);
         locationText = (TextView) findViewById(R.id.location);
         callActionButton = (ImageButton) findViewById(R.id.call);
+        btnSaveReq = (Button) findViewById(R.id.button_save);
         Intent intent = getIntent();
         String name = intent.getStringExtra("name");
         String bloodGroup = intent.getStringExtra("bloodGroup");
@@ -52,7 +55,12 @@ public class ShowRequest extends AppCompatActivity {
                 permissionCheck();
             }
         });
-
+        btnSaveReq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ShowRequest.this, "Requet has been saved!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     //method for making call

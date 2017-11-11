@@ -1,67 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/blood_request_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="10dp"
-    tools:context="com.example.asifsabir.blooddonor.MainActivity">
+    android:layout_margin="20dp"
+    android:gravity="left"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="35dp"
         android:layout_gravity="center"
-        android:fontFamily="cursive"
-        android:padding="15dp"
-        android:text="Make Blood Request"
-        android:textColor="@android:color/holo_red_light"
-        android:textSize="40dp"
-        android:textStyle="bold" />
+        android:layout_margin="20dp"
+        android:textColor="@android:color/black"
+        android:text="Welcome Mr XYZ" />
 
-    <EditText
-        android:id="@+id/et_name"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Name" />
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textColor="@android:color/black"
+            android:text="you are a " />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"
+            android:text="X++" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textColor="@android:color/black"
+            android:text=" blood donor" />
 
-    <EditText
-        android:id="@+id/et_phone"
-        android:layout_width="match_parent"
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Phone"
-        android:inputType="phone" />
-
+        android:layout_margin="10dp"
+        android:textSize="20dp"
+        android:textColor="@android:color/black"
+        android:text="Phone Number is : 01919191919" />
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="20dp"
+        android:textColor="@android:color/black"
+        android:text="Last location: " />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="20dp"
+        android:text="lattitude: 11.22\nlongitude: 22.33 " />
+</LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:orientation="horizontal">
-
         <TextView
-            android:textSize="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter a blood group:  " />
+            android:layout_margin="10dp"
+            android:textSize="20dp"
+            android:textColor="@android:color/black"
+            android:text="Get notification within: " />
 
         <Spinner
-            android:id="@+id/blood_group_spinner"
+            android:id="@+id/radius_spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
 
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/et_location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="location" />
-
     <Button
-        android:id="@+id/btn_request"
-        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:id="@+id/btn_make_req"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Request"
-        android:textColor="@color/colorPrimary" />
+        android:layout_margin="10dp"
+        android:textSize="15dp"
+        android:text="make A blood Request" />
+
 </LinearLayout>
