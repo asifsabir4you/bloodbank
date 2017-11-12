@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity
         boolean enableNotification = prefs.getBoolean("enable_notification", true);
         String radiusRange = prefs.getString("notification_range", "50");
         if (enableNotification) {
-            tvNotificationRange.setText(radiusRange + "km");
+            tvNotificationRange.setText(radiusRange + " km");
             tvNotificationRange.setTextColor(Color.BLACK);
         } else {
             tvNotificationRange.setText("Disable");

@@ -66,6 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="01919191919"
+        android:textColor="@android:color/black"
         android:textSize="20dp" />
 </LinearLayout>
     <LinearLayout
@@ -106,7 +107,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="50km"
+            android:text="50 km"
+            android:textColor="@android:color/black"
             android:id="@+id/tv_notification_range"
             android:textSize="20dp" />
     </LinearLayout>
