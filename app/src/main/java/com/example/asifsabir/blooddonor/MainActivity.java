@@ -1,7 +1,10 @@
 package com.example.asifsabir.blooddonor;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -12,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -20,20 +24,26 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-Button makeReqBtn;
+    Button makeReqBtn;
+    TextView tvNotificationRange;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         makeReqBtn = (Button) findViewById(R.id.btn_make_req);
+        tvNotificationRange = (TextView) findViewById(R.id.tv_notification_range);
+
+        checkSettingsData();
 
 
         makeReqBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),MakeRequest.class));
+                startActivity(new Intent(getApplicationContext(), MakeRequest.class));
             }
         });
 
@@ -73,7 +83,7 @@ Button makeReqBtn;
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            startActivity(new Intent(getApplicationContext(),SettingsActivity.class));
+            startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
             return true;
         }
 
@@ -98,46 +108,34 @@ Button makeReqBtn;
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    public void checkSettingsData() {
+        //viewing saved data in settings
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean enableNotification = prefs.getBoolean("enable_notification", true);
+        String radiusRange = prefs.getString("notification_range", "50");
+        if (enableNotification) {
+            tvNotificationRange.setText(radiusRange + "km");
+            tvNotificationRange.setTextColor(Color.BLACK);
+        } else {
+            tvNotificationRange.setText("Disable");
+            tvNotificationRange.setTextColor(Color.RED);
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        checkSettingsData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkSettingsData();
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //

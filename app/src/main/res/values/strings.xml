@@ -10,7 +10,20 @@
         <item>AB+</item>
         <item>AB -</item>
     </string-array>
-
+    <string-array name="notification_radius">
+        <item>10km</item>
+        <item>20km</item>
+        <item>30km</item>
+        <item>40km</item>
+        <item>50km</item>
+    </string-array>
+    <string-array name="notification_radius_values">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+    </string-array>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
