@@ -1,7 +1,11 @@
 package com.example.asifsabir.blooddonor;
 
+import android.content.Intent;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,6 +28,8 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
         super.onCreate(savedInstanceState);
         FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_make_request);
+        getSupportActionBar().setTitle("Make Blood Request");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Here
 
         Spinner spinner = (Spinner) findViewById(R.id.blood_group_spinner);
         spinner.setOnItemSelectedListener(this);
@@ -54,14 +60,26 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
 
                 if (nameText.equals("") || phoneText.equals("") || bloodGroupText.equals("") || locationText.equals("")) {
 
-//                    Snackbar.make(findViewById(R.id.blood_request_layout), "error", Snackbar.LENGTH_LONG).show();
-                    Toast.makeText(MakeRequest.this, "UnSuccessful! Fill all fields", Toast.LENGTH_SHORT).show();
+                    Snackbar snackbar = Snackbar.make(view, "Unsuccessful! Fill all fields", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null);
+                    View sbView = snackbar.getView();
+                    sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
+                    snackbar.show();
+//
+//                    Snackbar.make(view, "Unsuccessful! Fill all fields", Snackbar.LENGTH_LONG)
+//                            .setAction("Action", null).show();
+
 
                 } else {
                     DatabaseReference myRef = database.getReference("bloodRequest").push();
                     BloodReq bloodReq = new BloodReq(nameText, phoneText, bloodGroupText, locationText);
                     myRef.setValue(bloodReq);
-                    Toast.makeText(MakeRequest.this, "Request Successful!", Toast.LENGTH_SHORT).show();
+
+                    Snackbar snackbar = Snackbar.make(view, "Successful! Request has been sent.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null);
+                    View sbView = snackbar.getView();
+                    sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorGreen));
+                    snackbar.show();
 
                 }
             }
@@ -80,6 +98,19 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
     public void onNothingSelected(AdapterView<?> parent) {
         Toast.makeText(this, "please select something", Toast.LENGTH_SHORT).show();
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivityIfNeeded(intent, 0);
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
 
-
+    }
 }

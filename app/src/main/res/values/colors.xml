@@ -3,4 +3,7 @@
     <color name="colorPrimary">@android:color/holo_red_dark</color>
     <color name="colorPrimaryDark">@android:color/holo_red_light</color>
     <color name="colorAccent">#FF4081</color>
+
+
+    <color name="colorGreen">@android:color/holo_green_light</color>
 </resources>
