@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -41,7 +42,9 @@ dependencies {
     //messaging dep; added second;
     compile 'com.google.firebase:firebase-messaging:10.2.1'
     //for database ; added first
-    compile 'com.google.firebase:firebase-database:10.2.1'
+    compile 'com.google.firebase:firebase-database:11.0.0'  //10.2.1
+    //firebae auth
+    compile 'com.google.firebase:firebase-auth:11.0.0'
 
 }
 

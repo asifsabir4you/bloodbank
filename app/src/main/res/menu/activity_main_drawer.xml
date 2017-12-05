@@ -6,6 +6,11 @@
             android:id="@+id/nav_saved_req"
             android:icon="@android:drawable/ic_menu_sort_by_size"
             android:title="Saved Requests" />
+        <item
+            android:id="@+id/nav_log_out"
+            android:icon="@android:drawable/ic_menu_revert"
+            android:title="Log Out"
+            />
     </group>
 
     <item android:title="More">

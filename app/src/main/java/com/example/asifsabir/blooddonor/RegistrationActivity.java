@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,11 +16,17 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-public class MakeRequest extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+public class RegistrationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+    private FirebaseAuth mAuth;
 
     String bloodGroupText = "";
 
@@ -27,9 +34,8 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseApp.initializeApp(this);
-        setContentView(R.layout.activity_make_request);
-        getSupportActionBar().setTitle("Make Blood Request");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Here
+        setContentView(R.layout.activity_registration);
+        getSupportActionBar().setTitle("Register a new user");
 
         Spinner spinner = (Spinner) findViewById(R.id.blood_group_spinner);
         spinner.setOnItemSelectedListener(this);
@@ -41,55 +47,47 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
 // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
-//subscribing to topics
-//        FirebaseMessaging.getInstance().subscribeToTopic("bloodReq");
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         final EditText name = (EditText) findViewById(R.id.et_name);
         final EditText phone = (EditText) findViewById(R.id.et_phone);
-        final EditText location = (EditText) findViewById(R.id.et_location);
-        Button requestButton = (Button) findViewById(R.id.btn_request);
-
-        //retrieving intent data
-            Bundle extras = getIntent().getExtras();
-                String foundfullName = extras.getString("fullName");
-                String foundPhone = extras.getString("phone");
-                //----putting data on edit texts;
-                name.setText(foundfullName);
-                phone.setText(foundPhone);
+        final EditText lat = (EditText) findViewById(R.id.et_lat);
+        final EditText lon = (EditText) findViewById(R.id.et_lon);
+        final Button registerButton = (Button) findViewById(R.id.btn_register);
+        phone.setEnabled(false);
+        mAuth = FirebaseAuth.getInstance();
+        if (mAuth != null) {
+            phone.setText(mAuth.getCurrentUser().getPhoneNumber());
+        }
 
 
-
-        requestButton.setOnClickListener(new View.OnClickListener() {
+        registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final String nameText = name.getText().toString().trim();
                 final String phoneText = phone.getText().toString().trim();
-                final String locationText = location.getText().toString().trim();
+                final String lattitude = lat.getText().toString().trim();
+                final String longitude = lon.getText().toString().trim();
 
-                if (nameText.equals("") || phoneText.equals("") || bloodGroupText.equals("") || locationText.equals("")) {
+                if (nameText.equals("") || phoneText.equals("") || bloodGroupText.equals("") || lattitude.equals("") || longitude.equals("")) {
 
                     Snackbar snackbar = Snackbar.make(view, "Unsuccessful! Fill all fields", Snackbar.LENGTH_LONG)
                             .setAction("Action", null);
                     View sbView = snackbar.getView();
                     sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
                     snackbar.show();
-//
-//                    Snackbar.make(view, "Unsuccessful! Fill all fields", Snackbar.LENGTH_LONG)
-//                            .setAction("Action", null).show();
 
 
                 } else {
-                    DatabaseReference myRef = database.getReference("bloodRequest").push();
-                    BloodReq bloodReq = new BloodReq(nameText, phoneText, bloodGroupText, locationText);
-                    myRef.setValue(bloodReq);
+                    DatabaseReference myRef = database.getReference("Users").child(mAuth.getCurrentUser().getUid());
+                    Register register = new Register(nameText, phoneText, bloodGroupText, lattitude, longitude);
+                    myRef.setValue(register);
+//                    FirebaseMessaging.getInstance().subscribeToTopic(bloodGroupText);
 
-                    Snackbar snackbar = Snackbar.make(view, "Successful! Request has been sent.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null);
-                    View sbView = snackbar.getView();
-                    sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorGreen));
-                    snackbar.show();
+                    Toast.makeText(RegistrationActivity.this, "Successful Registration", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
+                    finish();
 
                 }
             }

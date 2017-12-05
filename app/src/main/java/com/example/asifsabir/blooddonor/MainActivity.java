@@ -18,6 +18,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 /**
  * Created by asifsabir on 11/11/17.
  */
@@ -25,7 +32,10 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     Button makeReqBtn;
+    TextView tvPhone, tvBloodGroup, tvFullName, tvLatLon;
     TextView tvNotificationRange;
+    private FirebaseAuth mAuth;
+    String fullName = "", phone = "", bloodGroup = "", lat = "", lon = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +44,54 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        tvFullName = (TextView) findViewById(R.id.tv_full_name);
+        tvPhone = (TextView) findViewById(R.id.tv_phone);
+        tvLatLon = (TextView) findViewById(R.id.tv_lat_lon);
+        tvBloodGroup = (TextView) findViewById(R.id.tv_blood_group);
         makeReqBtn = (Button) findViewById(R.id.btn_make_req);
         tvNotificationRange = (TextView) findViewById(R.id.tv_notification_range);
 
         checkSettingsData();
 
+        mAuth = FirebaseAuth.getInstance();
+        if (mAuth != null) {
+            //checking whether the user is registered or not, if then send to MainActivity
+            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Users").child(mAuth.getCurrentUser().getUid().toString());
+            rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+
+                    Register RegisteredUserData = snapshot.getValue(Register.class);
+
+
+                    fullName = RegisteredUserData.fullName.toString();
+                    phone = RegisteredUserData.phone.toString();
+                    bloodGroup = RegisteredUserData.bloodGroup.toString();
+                    lat = RegisteredUserData.lat.toString();
+                    lon = RegisteredUserData.lon.toString();
+
+                    tvFullName.setText("Welcome \n" + fullName);
+                    tvPhone.setText(phone);
+                    tvBloodGroup.setText(bloodGroup);
+                    tvLatLon.setText("lattitude: " + lat + "\nlongitude:" + lon);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(MainActivity.this, "Error happened in fetching user data!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+
 
         makeReqBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), MakeRequest.class));
+                Intent i = new Intent(MainActivity.this, MakeRequest.class);
+                i.putExtra("fullName", fullName);
+                i.putExtra("phone",phone);
+                startActivity(i);
             }
         });
 
@@ -98,6 +146,10 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_saved_req) {
             Toast.makeText(this, "Saved requests", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_log_out) {
+            mAuth.signOut();
+            startActivity(new Intent(MainActivity.this, PhoneAuthActivity.class));
+            finish();
         } else if (id == R.id.nav_share) {
             Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_about) {
@@ -137,25 +189,3 @@ public class MainActivity extends AppCompatActivity
     }
 }
 
-
-//
-//
-//
-// class MaisnActivity extends AppCompatActivity {
-//
-//Button makeReqBtn ;
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//    makeReqBtn = (Button) findViewById(R.id.btn_make_req);
-//
-//
-//    makeReqBtn.setOnClickListener(new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            startActivity(new Intent(getApplicationContext(),MakeRequest.class));
-//        }
-//    });
-//    }
-//
-//}
