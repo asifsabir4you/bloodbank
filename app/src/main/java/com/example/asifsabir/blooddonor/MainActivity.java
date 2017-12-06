@@ -18,12 +18,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 /**
  * Created by asifsabir on 11/11/17.
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity
         tvBloodGroup = (TextView) findViewById(R.id.tv_blood_group);
         makeReqBtn = (Button) findViewById(R.id.btn_make_req);
         tvNotificationRange = (TextView) findViewById(R.id.tv_notification_range);
+        //subscribing to that blood group topics
 
         checkSettingsData();
 
@@ -74,6 +78,17 @@ public class MainActivity extends AppCompatActivity
                     tvPhone.setText(phone);
                     tvBloodGroup.setText(bloodGroup);
                     tvLatLon.setText("lattitude: " + lat + "\nlongitude:" + lon);
+                    //subscribing to the topics
+                    String topics = "all";
+                    if (bloodGroup.equals("A+")) topics = "Ap";
+                    else if (bloodGroup.equals("A-")) topics = "An";
+                    else if (bloodGroup.equals("B+")) topics = "Bp";
+                    else if (bloodGroup.equals("B-")) topics = "Bn";
+                    else if (bloodGroup.equals("O+")) topics = "Op";
+                    else if (bloodGroup.equals("O-")) topics = "On";
+                    else topics = "all";
+                    FirebaseMessaging.getInstance().subscribeToTopic(topics);
+
                 }
 
                 @Override
@@ -90,7 +105,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, MakeRequest.class);
                 i.putExtra("fullName", fullName);
-                i.putExtra("phone",phone);
+                i.putExtra("phone", phone);
                 startActivity(i);
             }
         });
@@ -147,6 +162,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_saved_req) {
             Toast.makeText(this, "Saved requests", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_log_out) {
+            FirebaseMessaging.getInstance().subscribeToTopic("none");
             mAuth.signOut();
             startActivity(new Intent(MainActivity.this, PhoneAuthActivity.class));
             finish();

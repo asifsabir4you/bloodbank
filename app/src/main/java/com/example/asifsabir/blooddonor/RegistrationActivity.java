@@ -33,7 +33,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseApp.initializeApp(this);
+     //   FirebaseApp.initializeApp(getApplicationContext());
         setContentView(R.layout.activity_registration);
         getSupportActionBar().setTitle("Register a new user");
 
@@ -83,7 +83,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                     DatabaseReference myRef = database.getReference("Users").child(mAuth.getCurrentUser().getUid());
                     Register register = new Register(nameText, phoneText, bloodGroupText, lattitude, longitude);
                     myRef.setValue(register);
-               //     FirebaseMessaging.getInstance().subscribeToTopic(bloodGroupText);
+      //              FirebaseMessaging.getInstance().subscribeToTopic(bloodGroupText.toString());
 
                     Toast.makeText(RegistrationActivity.this, "Successful Registration", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
