@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    >
     <SwitchPreference
+        android:defaultValue="true"
         android:key="enable_notification"
-        android:title="Enable notification"
         android:summary="get notified on blood requests"
-        android:defaultValue="true"/>
+        android:title="Enable notification" />
     <ListPreference
         android:defaultValue="50"
         android:dialogTitle="Notification radius:"
         android:entries="@array/notification_radius"
         android:entryValues="@array/notification_radius_values"
         android:key="notification_range"
-        android:title="Notification range"
         android:summary="Notification radius around you"
-        />
+        android:title="Notification range" />
 </PreferenceScreen>
 

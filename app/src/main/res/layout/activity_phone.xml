@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_layout"
+    android:id="@+id/linear_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/background"
     android:gravity="center"
     android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:fontFamily="cursive"
+        android:gravity="center"
+        android:text="User Authentication"
+        android:textColor="@color/colorPrimary"
+        android:textSize="40dp" />
 
     <LinearLayout
         android:id="@+id/phone_auth_fields"
@@ -33,13 +43,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_verification_code"
-                android:inputType="number" />
+                android:inputType="number"
+                android:visibility="gone" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:orientation="vertical"
             android:weightSum="3.0">
 
@@ -55,14 +67,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:text="@string/verify_phone_auth" />
+                android:text="@string/verify_phone_auth"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/button_resend"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:text="@string/resend_phone_auth" />
+                android:text="@string/resend_phone_auth"
+                android:visibility="gone" />
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:id="@+id/pb_loading"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"/>
         </LinearLayout>
 
     </LinearLayout>

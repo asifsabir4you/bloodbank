@@ -1,6 +1,7 @@
 package com.example.asifsabir.blooddonor;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,7 +11,11 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 /**
@@ -30,6 +35,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -45,5 +51,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
     }
+
+
 }
 

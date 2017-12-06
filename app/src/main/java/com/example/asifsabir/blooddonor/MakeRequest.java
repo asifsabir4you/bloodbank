@@ -52,13 +52,12 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
         Button requestButton = (Button) findViewById(R.id.btn_request);
 
         //retrieving intent data
-            Bundle extras = getIntent().getExtras();
-                String foundfullName = extras.getString("fullName");
-                String foundPhone = extras.getString("phone");
-                //----putting data on edit texts;
-                name.setText(foundfullName);
-                phone.setText(foundPhone);
-
+        Bundle extras = getIntent().getExtras();
+        String foundfullName = extras.getString("fullName");
+        String foundPhone = extras.getString("phone");
+        //----putting data on edit texts;
+        name.setText(foundfullName);
+        phone.setText(foundPhone);
 
 
         requestButton.setOnClickListener(new View.OnClickListener() {

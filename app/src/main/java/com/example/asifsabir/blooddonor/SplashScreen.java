@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,14 +32,17 @@ public class SplashScreen extends Activity {
     public static int status = 5; //0 for not auth; 1 for auth; 2 for registered;
     private FirebaseAuth mAuth;
     ImageView bloodDrop;
-    Animation dropletAnim;
-
+    Animation dropletAnim,appNameAnim;
+TextView appName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         bloodDrop = (ImageView) findViewById(R.id.iv_bloodDrop);
+        appName =(TextView)findViewById(R.id.tv_appName);
         dropletAnim = AnimationUtils.loadAnimation(this, R.anim.blood_drop_anim);
+        appNameAnim = AnimationUtils.loadAnimation(this, R.anim.app_name_anim);
+
         /**
          * Showing splashscreen while making network calls to download necessary
          * data before launching the app Will use AsyncTask to make http call
@@ -72,6 +76,7 @@ public class SplashScreen extends Activity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             bloodDrop.setAnimation(dropletAnim);
+            appName.setAnimation(appNameAnim);
             // close this activity
             new Handler().postDelayed(new Runnable() {
             /*

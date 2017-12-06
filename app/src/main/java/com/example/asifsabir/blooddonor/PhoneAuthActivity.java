@@ -6,16 +6,20 @@ package com.example.asifsabir.blooddonor;
 
 
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -46,7 +50,8 @@ public class PhoneAuthActivity extends AppCompatActivity implements
 
     EditText mPhoneNumberField, mVerificationField;
     Button mStartButton, mVerifyButton, mResendButton;
-
+    ProgressBar progressBar;
+    LinearLayout linearLayout;
     private FirebaseAuth mAuth;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
@@ -59,12 +64,17 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone);
         getSupportActionBar().setTitle("User Authentication");
+
+
+        linearLayout = (LinearLayout) findViewById(R.id
+                .linear_layout);
         mPhoneNumberField = (EditText) findViewById(R.id.field_phone_number);
         mVerificationField = (EditText) findViewById(R.id.field_verification_code);
 
         mStartButton = (Button) findViewById(R.id.button_start_verification);
         mVerifyButton = (Button) findViewById(R.id.button_verify_phone);
         mResendButton = (Button) findViewById(R.id.button_resend);
+        progressBar = (ProgressBar) findViewById(R.id.pb_loading);
 
         mStartButton.setOnClickListener(this);
         mVerifyButton.setOnClickListener(this);
@@ -92,6 +102,16 @@ public class PhoneAuthActivity extends AppCompatActivity implements
             @Override
             public void onCodeSent(String verificationId,
                                    PhoneAuthProvider.ForceResendingToken token) {
+                //showing a snackbar
+                Snackbar snackbar = Snackbar.make(linearLayout, "Code sent!", Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null);
+                View sbView = snackbar.getView();
+                sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorGreen));
+                snackbar.show();
+                mVerifyButton.setVisibility(View.VISIBLE);
+                mVerificationField.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+
                 Log.d(TAG, "onCodeSent:" + verificationId);
                 mVerificationId = verificationId;
                 mResendToken = token;
@@ -119,6 +139,15 @@ public class PhoneAuthActivity extends AppCompatActivity implements
 
 
     private void startPhoneNumberVerification(String phoneNumber) {
+        //showing a snackbar
+        Snackbar snackbar = Snackbar.make(linearLayout, "Sending Code! Please wait!", Snackbar.LENGTH_LONG)
+                .setAction("Action", null);
+        View sbView = snackbar.getView();
+        sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorBlue));
+        snackbar.show();
+        mResendButton.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
                 60,                 // Timeout duration
@@ -128,12 +157,15 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     }
 
     private void verifyPhoneNumberWithCode(String verificationId, String code) {
+        progressBar.setVisibility(View.VISIBLE);
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
         signInWithPhoneAuthCredential(credential);
     }
 
     private void resendVerificationCode(String phoneNumber,
                                         PhoneAuthProvider.ForceResendingToken token) {
+        progressBar.setVisibility(View.VISIBLE);
+
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
                 60,                 // Timeout duration
@@ -151,6 +183,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         }
         return true;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -181,7 +214,8 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         }
 
     }
-    public void checkDatabaseRegistrationData(){
+
+    public void checkDatabaseRegistrationData() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
 
@@ -192,16 +226,16 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                 public void onDataChange(DataSnapshot snapshot) {
                     if (snapshot.hasChild(mAuth.getCurrentUser().getUid().toString())) {
                         // Shifting to MainActivity
-                        startActivity(new Intent(PhoneAuthActivity.this,MainActivity.class));
+                        startActivity(new Intent(PhoneAuthActivity.this, MainActivity.class));
                         finish();
-                    }
-                    else{
+                    } else {
                         //sending for registration
                         Toast.makeText(PhoneAuthActivity.this, "not found on database", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(PhoneAuthActivity.this,RegistrationActivity.class));
+                        startActivity(new Intent(PhoneAuthActivity.this, RegistrationActivity.class));
                         finish();
                     }
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     //DO nothing

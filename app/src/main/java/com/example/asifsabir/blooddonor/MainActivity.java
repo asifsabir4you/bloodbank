@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
                     lat = RegisteredUserData.lat.toString();
                     lon = RegisteredUserData.lon.toString();
 
-                    tvFullName.setText("Welcome \n" + fullName);
+                    tvFullName.setText("Welcome " + fullName);
                     tvPhone.setText(phone);
                     tvBloodGroup.setText(bloodGroup);
                     tvLatLon.setText("lattitude: " + lat + "\nlongitude:" + lon);

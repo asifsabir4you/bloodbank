@@ -4,19 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:gravity="left"
     android:orientation="vertical"
+    android:paddingLeft="15dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.asifsabir.blooddonor.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
     <TextView
         android:id="@+id/tv_full_name"
-        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:text="Welcome \n - - - - -   - - - - "
+        android:gravity="center"
+        android:text="Welcome   - - - - - "
         android:textColor="@android:color/black"
         android:textSize="25dp" />
 
@@ -29,7 +31,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@android:drawable/star_big_off"
+            android:drawableLeft="@android:drawable/btn_star_big_off"
             android:drawablePadding="15dp"
             android:text="you are  "
             android:textColor="@android:color/black"
