@@ -83,7 +83,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                     DatabaseReference myRef = database.getReference("Users").child(mAuth.getCurrentUser().getUid());
                     Register register = new Register(nameText, phoneText, bloodGroupText, lattitude, longitude);
                     myRef.setValue(register);
-//                    FirebaseMessaging.getInstance().subscribeToTopic(bloodGroupText);
+               //     FirebaseMessaging.getInstance().subscribeToTopic(bloodGroupText);
 
                     Toast.makeText(RegistrationActivity.this, "Successful Registration", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(RegistrationActivity.this, MainActivity.class));

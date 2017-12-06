@@ -29,7 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class SplashScreen extends Activity {
-    public static int status = 5; //0 for not auth; 1 for auth; 2 for registered;
+    public static int status = 0; //0 for not auth; 1 for auth; 2 for registered;
     private FirebaseAuth mAuth;
     ImageView bloodDrop;
     Animation dropletAnim,appNameAnim;
@@ -93,7 +93,6 @@ TextView appName;
                     Intent iReg = new Intent(SplashScreen.this, RegistrationActivity.class);
 
                     if (status == 0) {
-
                         startActivity(iAuth);
                         //    Toast.makeText(SplashScreen.this, "auth", Toast.LENGTH_SHORT).show();
                     } else if (status == 1) {
@@ -105,7 +104,7 @@ TextView appName;
                     }
                     finish();
                 }
-            }, 1500);
+            }, 4000);
         }
 
 
@@ -138,7 +137,6 @@ TextView appName;
             });
 
         } else {
-            status = 0;
         }
     }
 

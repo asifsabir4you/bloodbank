@@ -230,7 +230,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                         finish();
                     } else {
                         //sending for registration
-                        Toast.makeText(PhoneAuthActivity.this, "not found on database", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PhoneAuthActivity.this, "You are not registered!", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(PhoneAuthActivity.this, RegistrationActivity.class));
                         finish();
                     }
