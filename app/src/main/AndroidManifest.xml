@@ -19,7 +19,10 @@
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".PhoneAuthActivity">
+
+        <activity
+            android:name=".SplashScreen"
+            android:theme="@android:style/Theme.Light.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,6 +32,8 @@
 
         <activity android:name=".ShowRequest"></activity>
         <activity android:name=".MakeRequest"></activity>
+        <activity android:name=".PhoneAuthActivity"></activity>
+
 
         <activity android:name=".RegistrationActivity"></activity>
         <activity android:name=".SettingsActivity"></activity>
