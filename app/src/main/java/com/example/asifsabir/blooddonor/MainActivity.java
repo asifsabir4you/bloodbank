@@ -6,17 +6,20 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.test.mock.MockPackageManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.Manifest;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +36,13 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+
+    private static final int REQUEST_CODE_PERMISSION = 2;
+    String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
+    // GPSTracker class
+    GPSTracker gps;
+    double latitude,longitude;
     Button makeReqBtn;
     TextView tvPhone, tvBloodGroup, tvFullName, tvLatLon;
     TextView tvNotificationRange;
@@ -54,11 +64,51 @@ public class MainActivity extends AppCompatActivity
         makeReqBtn = (Button) findViewById(R.id.btn_make_req);
         tvNotificationRange = (TextView) findViewById(R.id.tv_notification_range);
         //subscribing to that blood group topics
-
+        //checking settings
         checkSettingsData();
 
+        //getting locations
+
+        try {
+            if (ActivityCompat.checkSelfPermission(this, mPermission)
+                    != MockPackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this, new String[]{mPermission},
+                        REQUEST_CODE_PERMISSION);
+
+                // If any permission above not allowed by user, this condition will
+                //   execute every time, else your else part will work
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        // show location button click event
+        gps = new GPSTracker(MainActivity.this);
+
+        // check if GPS enabled
+        if (gps.canGetLocation()) {
+
+             latitude = gps.getLatitude();
+             longitude = gps.getLongitude();
+
+            // \n is for new line
+            tvLatLon.setText("lattitude: " + latitude + "\n" + "longitude: " + longitude);
+
+
+        } else {
+            // can't get location
+            // GPS or Network is not enabled
+            // Ask user to enable GPS/network in settings
+            gps.showSettingsAlert();
+        }
+
+
         mAuth = FirebaseAuth.getInstance();
-        if (mAuth != null) {
+        if (mAuth != null)
+
+        {
             //checking whether the user is registered or not, if then send to MainActivity
             DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Users").child(mAuth.getCurrentUser().getUid().toString());
             rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -77,7 +127,7 @@ public class MainActivity extends AppCompatActivity
                     tvFullName.setText("Welcome " + fullName);
                     tvPhone.setText(phone);
                     tvBloodGroup.setText(bloodGroup);
-                    tvLatLon.setText("lattitude: " + lat + "\nlongitude:" + lon);
+              //      tvLatLon.setText("lattitude: " + lat + "\nlongitude:" + lon);
                     //subscribing to the topics
                     String topics = "all";
                     if (bloodGroup.equals("A+")) topics = "Ap";
@@ -100,12 +150,17 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        makeReqBtn.setOnClickListener(new View.OnClickListener() {
+        makeReqBtn.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, MakeRequest.class);
                 i.putExtra("fullName", fullName);
                 i.putExtra("phone", phone);
+                i.putExtra("latitude",latitude);
+                i.putExtra("longitude",longitude);
+                i.putExtra("uID",mAuth.getCurrentUser().getUid());
                 startActivity(i);
             }
         });

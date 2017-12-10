@@ -1,5 +1,6 @@
 package com.example.asifsabir.blooddonor;
 
+import android.*;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -22,10 +23,15 @@ import android.widget.Toast;
 
 public class ShowRequest extends AppCompatActivity {
 
-    TextView nametext, bloodGroupText, phoneText, locationText;
+    TextView nametext, bloodGroupText, phoneText, locationText, distanceText, requestTimeText;
     ImageButton callActionButton;
     public static String phone;
     Button btnSaveReq;
+    private static final int REQUEST_CODE_PERMISSION = 2;
+    String mPermission = android.Manifest.permission.ACCESS_FINE_LOCATION;
+    double currentLat, currentLon;
+    // GPSTracker class
+    GPSTracker gps;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +44,10 @@ public class ShowRequest extends AppCompatActivity {
         bloodGroupText = (TextView) findViewById(R.id.blood_group);
         phoneText = (TextView) findViewById(R.id.phone);
         locationText = (TextView) findViewById(R.id.location);
+        distanceText = (TextView) findViewById(R.id.distance);
+        requestTimeText = (TextView) findViewById(R.id.reqtime);
+
+
         callActionButton = (ImageButton) findViewById(R.id.call);
         btnSaveReq = (Button) findViewById(R.id.button_save);
         Intent intent = getIntent();
@@ -45,11 +55,44 @@ public class ShowRequest extends AppCompatActivity {
         String bloodGroup = intent.getStringExtra("bloodGroup");
         phone = intent.getStringExtra("phone");
         String location = intent.getStringExtra("location");
+        String latitude = intent.getStringExtra("latitude");
+        String longitude = intent.getStringExtra("longitude");
+        String timeStamp = intent.getStringExtra("timeStamp");
+
+
+        // getting this users location data
+        gps = new GPSTracker(ShowRequest.this);
+
+        // check if GPS enabled
+        if (gps.canGetLocation()) {
+
+            currentLat = gps.getLatitude();
+            currentLon = gps.getLongitude();
+        } else {
+            // can't get location
+            // GPS or Network is not enabled
+            // Ask user to enable GPS/network in settings
+            gps.showSettingsAlert();
+        }
+
+
+//calculating distances
+/*
+        int R = 6371; // km
+        double x = (currentLon - Double.valueOf(longitude)) * Math.cos((Double.valueOf(latitude) + currentLat) / 2);
+        double y = (currentLat - Double.valueOf(latitude));
+        double distance = Math.sqrt(x * x + y * y) * R;       */
+
+
+        double distance = distance(currentLat,currentLon,Double.valueOf(latitude),Double.valueOf(longitude));
+
 
         nametext.setText(name);
         bloodGroupText.setText(bloodGroup);
         phoneText.setText(phone);
         locationText.setText(location);
+        distanceText.setText(latitude + "\n" + longitude+"\n"+distance);
+        requestTimeText.setText(timeStamp);
 
         callActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +104,7 @@ public class ShowRequest extends AppCompatActivity {
         btnSaveReq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ShowRequest.this, "Requet has been saved!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ShowRequest.this, "Request has been saved!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -84,6 +127,27 @@ public class ShowRequest extends AppCompatActivity {
                 makeCall(phone);
             }
         }
+    }
+
+    private double distance(double lat1, double lon1, double lat2, double lon2) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1))
+                * Math.sin(deg2rad(lat2))
+                + Math.cos(deg2rad(lat1))
+                * Math.cos(deg2rad(lat2))
+                * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+        return (dist);  //in Miles
+    }
+
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
     }
 
     @Override
@@ -112,6 +176,7 @@ public class ShowRequest extends AppCompatActivity {
             // permissions this app might request
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -127,4 +192,7 @@ public class ShowRequest extends AppCompatActivity {
         }
 
     }
+
+
+
 }

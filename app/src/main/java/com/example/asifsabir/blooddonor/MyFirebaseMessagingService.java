@@ -30,7 +30,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             //do location distance check
-            showNotification(remoteMessage.getData().get("name"), remoteMessage.getData().get("bloodGroup"),remoteMessage.getData().get("phone"),remoteMessage.getData().get("location"));
+            showNotification(remoteMessage.getData().get("name"), remoteMessage.getData().get("bloodGroup"),
+                    remoteMessage.getData().get("phone"), remoteMessage.getData().get("location"),
+                    remoteMessage.getData().get("latitude"), remoteMessage.getData().get("longitude")
+                    , remoteMessage.getData().get("timeStamp"));
         }
 
         // Check if message contains a notification payload.
@@ -39,23 +42,30 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-    private void showNotification(String name, String bloodGroup,String phone, String location) {
+    private void showNotification(String name, String bloodGroup,
+                                  String phone, String location,
+                                  String latitude, String longitude,
+                                  String timeStamp) {
         Intent intent = new Intent(this, ShowRequest.class);
 
-        intent.putExtra("name",name);
-        intent.putExtra("bloodGroup",bloodGroup);
-        intent.putExtra("phone",phone);
-        intent.putExtra("location",location);
+        intent.putExtra("name", name);
+        intent.putExtra("bloodGroup", bloodGroup);
+        intent.putExtra("phone", phone);
+        intent.putExtra("location", location);
+        intent.putExtra("latitude", latitude);
+        intent.putExtra("longitude", longitude);
+        intent.putExtra("timeStamp", timeStamp);
+
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, createID() /* Request code 0*/, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setContentTitle("Blood wanted: " + bloodGroup)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentText("By: " + name+" At: "+location)
+                .setContentText("By: " + name + " At: " + location)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
@@ -67,10 +77,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
     }
-//creating ID using date stamp
-    public int createID(){
+
+    //creating ID using date stamp
+    public int createID() {
         Date now = new Date();
-        int id = Integer.parseInt(new SimpleDateFormat("ddHHmmssSS",  Locale.US).format(now));
+        int id = Integer.parseInt(new SimpleDateFormat("ddHHmmssSS", Locale.US).format(now));
         return id;
     }
 }

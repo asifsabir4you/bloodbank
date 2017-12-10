@@ -19,10 +19,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MakeRequest extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     String bloodGroupText = "";
-
+public double foundLatitude,foundLongitude;
+    String uID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +59,16 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
         Bundle extras = getIntent().getExtras();
         String foundfullName = extras.getString("fullName");
         String foundPhone = extras.getString("phone");
+          foundLatitude = extras.getDouble("latitude");
+          foundLongitude = extras.getDouble("longitude");
+        final String parsedLat = String.valueOf(foundLatitude);
+        final String parsedLon = String.valueOf(foundLongitude);
+
+        uID = extras.getString("uID");
+
+
+
+//        Toast.makeText(this, foundLatitude + "\n" + foundLongitude+"\n"+getTimeStamp()+"\n"+uID, Toast.LENGTH_SHORT).show();
         //----putting data on edit texts;
         name.setText(foundfullName);
         phone.setText(foundPhone);
@@ -81,7 +95,7 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
 
                 } else {
                     DatabaseReference myRef = database.getReference("bloodRequest").push();
-                    BloodReq bloodReq = new BloodReq(nameText, phoneText, bloodGroupText, locationText);
+                    BloodReq bloodReq = new BloodReq(nameText, phoneText, bloodGroupText, locationText, parsedLat, parsedLon,uID, getTimeStamp());
                     myRef.setValue(bloodReq);
 
                     Snackbar snackbar = Snackbar.make(view, "Successful! Request has been sent.", Snackbar.LENGTH_LONG)
@@ -123,4 +137,15 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
         }
 
     }
+
+    public String getTimeStamp() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a\n'Date: 'dd-MM-yyyy ");
+        String format = simpleDateFormat.format(new Date());
+        return format;
+    }
+
+    public String getuID(){
+        return "test";
+    }
+
 }
