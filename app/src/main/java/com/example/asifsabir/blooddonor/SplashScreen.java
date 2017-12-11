@@ -8,11 +8,20 @@ package com.example.asifsabir.blooddonor;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.Manifest;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -29,25 +38,32 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class SplashScreen extends Activity {
-    public static int status = 0; //0 for not auth; 1 for auth; 2 for registered;
+    public static int status = 5; //0 for not auth; 1 for auth; 2 for registered;
     private FirebaseAuth mAuth;
     ImageView bloodDrop;
-    Animation dropletAnim,appNameAnim;
-TextView appName;
+    Animation dropletAnim, appNameAnim;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 2;
+    // Splash screen timer
+    String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
+
+    TextView appName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         bloodDrop = (ImageView) findViewById(R.id.iv_bloodDrop);
-        appName =(TextView)findViewById(R.id.tv_appName);
+        appName = (TextView) findViewById(R.id.tv_appName);
         dropletAnim = AnimationUtils.loadAnimation(this, R.anim.blood_drop_anim);
         appNameAnim = AnimationUtils.loadAnimation(this, R.anim.app_name_anim);
 
-        /**
-         * Showing splashscreen while making network calls to download necessary
-         * data before launching the app Will use AsyncTask to make http call
-         */
-        new PrefetchData().execute();
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            permissionCheck();
+        } else {
+            new PrefetchData().execute();
+        }
+
 
     }
 
@@ -98,9 +114,12 @@ TextView appName;
                     } else if (status == 1) {
                         startActivity(iReg);
                         //  Toast.makeText(SplashScreen.this, "refg", Toast.LENGTH_SHORT).show();
-                    } else {
+                    } else if (status == 2) {
                         startActivity(iMain);
                         //    Toast.makeText(SplashScreen.this, "main", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        //do nothing
                     }
                     finish();
                 }
@@ -108,6 +127,50 @@ TextView appName;
         }
 
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the task you need to do.
+                    new PrefetchData().execute();
+                } else {
+
+                    //---------showing informations---------
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(SplashScreen.this);
+                    builder1.setMessage("To use the app you must enable GPS permission. \nwant to grant ?");
+                    builder1.setCancelable(true);
+
+                    builder1.setPositiveButton(
+                            "Yes",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    permissionCheck();
+                                }
+                            });
+
+                    builder1.setNegativeButton(
+                            "No",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                    Toast.makeText(SplashScreen.this, "Sorry! You can't use the app!", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            });
+
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
+
+                    // permission denied, boo! Disable the functionality that depends on this permission.
+                }
+                return;
+            }
+        }
     }
 
 
@@ -124,9 +187,11 @@ TextView appName;
                     if (snapshot.hasChild(mAuth.getCurrentUser().getUid().toString())) {
                         //send to mainActivity
                         status = 2;
+                        return;
                     } else {
                         //sending for registration
                         status = 1;
+                        return;
                     }
                 }
 
@@ -137,8 +202,28 @@ TextView appName;
             });
 
         } else {
+            status = 0;
+            return;
         }
     }
 
+    void permissionCheck() {
+// Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // No explanation needed, we can request the permission.
+
+            ActivityCompat.requestPermissions(SplashScreen.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+            // MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+
+        }
+    }
 
 }

@@ -3,6 +3,7 @@ package com.example.asifsabir.blooddonor;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
@@ -17,10 +18,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 
+import com.google.android.gms.common.api.BooleanResult;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -40,7 +44,8 @@ public class MainActivity extends AppCompatActivity
 
     private static final int REQUEST_CODE_PERMISSION = 2;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
-    // GPSTracker class
+    LinearLayout userDataLayout;
+    ProgressBar progressBar;
     GPSTracker gps;
     double latitude, longitude;
     Button makeReqBtn;
@@ -48,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     TextView tvNotificationRange;
     private FirebaseAuth mAuth;
     String fullName = "", phone = "", bloodGroup = "", lat = "", lon = "";
+    boolean userBan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +62,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        progressBar = (ProgressBar) findViewById(R.id.pb_loading);
         tvFullName = (TextView) findViewById(R.id.tv_full_name);
         tvPhone = (TextView) findViewById(R.id.tv_phone);
         tvLatLon = (TextView) findViewById(R.id.tv_lat_lon);
         tvBloodGroup = (TextView) findViewById(R.id.tv_blood_group);
         makeReqBtn = (Button) findViewById(R.id.btn_make_req);
         tvNotificationRange = (TextView) findViewById(R.id.tv_notification_range);
+        userDataLayout = (LinearLayout) findViewById(R.id.layout_user_area);
         //subscribing to that blood group topics
         //checking settings
         checkSettingsData();
@@ -123,21 +130,33 @@ public class MainActivity extends AppCompatActivity
                     bloodGroup = RegisteredUserData.bloodGroup.toString();
                     lat = RegisteredUserData.lat.toString();
                     lon = RegisteredUserData.lon.toString();
+                    userBan = Boolean.valueOf(RegisteredUserData.userBan.toString());
+                    progressBar.setVisibility(View.GONE);
+                    if (userBan==true) {
+                        userDataLayout.setVisibility(View.GONE);
+                        tvFullName.setText("Your accound has been suspended!\n\nYou can no longer accept or \n make requests!");
+                        tvFullName.setTextColor(Color.RED);
+                        FirebaseMessaging.getInstance().subscribeToTopic("banned");
+                    } else {
+                        tvFullName.setText("Welcome " + fullName);
+                        tvPhone.setText(phone);
+                        tvBloodGroup.setText(bloodGroup);
+                        //      tvLatLon.setText("lattitude: " + lat + "\nlongitude:" + lon);
+                        //subscribing to the topics
+                        String topics;
+                        if (bloodGroup.equals("A+")) topics = "Ap";
+                        else if (bloodGroup.equals("A-")) topics = "An";
+                        else if (bloodGroup.equals("B+")) topics = "Bp";
+                        else if (bloodGroup.equals("B-")) topics = "Bn";
+                        else if (bloodGroup.equals("AB+")) topics = "ABp";
+                        else if (bloodGroup.equals("AB-")) topics = "ABn";
+                        else if (bloodGroup.equals("O+")) topics = "Op";
+                        else if (bloodGroup.equals("O-")) topics = "On";
+                        else topics = "all";
+                        FirebaseMessaging.getInstance().subscribeToTopic(topics);
 
-                    tvFullName.setText("Welcome " + fullName);
-                    tvPhone.setText(phone);
-                    tvBloodGroup.setText(bloodGroup);
-                    //      tvLatLon.setText("lattitude: " + lat + "\nlongitude:" + lon);
-                    //subscribing to the topics
-                    String topics = "all";
-                    if (bloodGroup.equals("A+")) topics = "Ap";
-                    else if (bloodGroup.equals("A-")) topics = "An";
-                    else if (bloodGroup.equals("B+")) topics = "Bp";
-                    else if (bloodGroup.equals("B-")) topics = "Bn";
-                    else if (bloodGroup.equals("O+")) topics = "Op";
-                    else if (bloodGroup.equals("O-")) topics = "On";
-                    else topics = "all";
-                    FirebaseMessaging.getInstance().subscribeToTopic(topics);
+                    }
+
 
                 }
 
@@ -220,6 +239,11 @@ public class MainActivity extends AppCompatActivity
             FirebaseMessaging.getInstance().subscribeToTopic("none");
             mAuth.signOut();
             startActivity(new Intent(MainActivity.this, PhoneAuthActivity.class));
+            finish();
+        } else if (id == R.id.nav_fb) {
+            Uri uri = Uri.parse("https://web.facebook.com/groups/713171778879956/"); // missing 'http://' will cause crashed
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
             finish();
         } else if (id == R.id.nav_share) {
             Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);

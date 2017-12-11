@@ -45,6 +45,17 @@
                 android:hint="@string/hint_verification_code"
                 android:inputType="number"
                 android:visibility="gone" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:id="@+id/tv_verification_hint"
+                android:textSize="15dp"
+                android:textStyle="italic"
+                android:visibility="gone"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="*May take upto 1 minute to get the sms."/>
 
         </LinearLayout>
 

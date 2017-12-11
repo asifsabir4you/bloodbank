@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -51,6 +52,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     EditText mPhoneNumberField, mVerificationField;
     Button mStartButton, mVerifyButton, mResendButton;
     ProgressBar progressBar;
+    TextView mVerificationHint;
     LinearLayout linearLayout;
     private FirebaseAuth mAuth;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
@@ -75,7 +77,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         mVerifyButton = (Button) findViewById(R.id.button_verify_phone);
         mResendButton = (Button) findViewById(R.id.button_resend);
         progressBar = (ProgressBar) findViewById(R.id.pb_loading);
-
+        mVerificationHint = (TextView) findViewById(R.id.tv_verification_hint);
         mStartButton.setOnClickListener(this);
         mVerifyButton.setOnClickListener(this);
         mResendButton.setOnClickListener(this);
@@ -103,15 +105,17 @@ public class PhoneAuthActivity extends AppCompatActivity implements
             public void onCodeSent(String verificationId,
                                    PhoneAuthProvider.ForceResendingToken token) {
                 //showing a snackbar
-                Snackbar snackbar = Snackbar.make(linearLayout, "Code sent!", Snackbar.LENGTH_SHORT)
+                Snackbar snackbar = Snackbar.make(linearLayout, "Code sent! Please wait!", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null);
                 View sbView = snackbar.getView();
                 sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorGreen));
                 snackbar.show();
                 mVerifyButton.setVisibility(View.VISIBLE);
                 mVerificationField.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
+                mVerificationHint.setVisibility(View.VISIBLE);
 
+                progressBar.setVisibility(View.GONE);
+                mStartButton.setVisibility(View.GONE);
                 Log.d(TAG, "onCodeSent:" + verificationId);
                 mVerificationId = verificationId;
                 mResendToken = token;

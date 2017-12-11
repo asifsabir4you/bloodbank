@@ -24,19 +24,25 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class RegistrationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    private FirebaseAuth mAuth;
 
     String bloodGroupText = "";
+    GPSTracker gps;
+    double latOfSensor = 0, lonOfSensor = 0;
+    String latitude = "", longitude = "";
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-     //   FirebaseApp.initializeApp(getApplicationContext());
+        //   FirebaseApp.initializeApp(getApplicationContext());
         setContentView(R.layout.activity_registration);
         getSupportActionBar().setTitle("Register a new user");
-
+        mAuth = FirebaseAuth.getInstance();
         Spinner spinner = (Spinner) findViewById(R.id.blood_group_spinner);
         spinner.setOnItemSelectedListener(this);
 // Create an ArrayAdapter using the string array and a default spinner layout
@@ -48,13 +54,30 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
         spinner.setAdapter(adapter);
 
 
+        //getting gps data
+        gps = new GPSTracker(RegistrationActivity.this);
+
+        // check if GPS enabled
+        if (gps.canGetLocation()) {
+
+            latOfSensor = gps.getLatitude();
+            lonOfSensor = gps.getLongitude();
+
+        } else {
+            // can't get location
+            // GPS or Network is not enabled
+            // Ask user to enable GPS/network in settings
+            gps.showSettingsAlert();
+        }
+
+
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         final EditText name = (EditText) findViewById(R.id.et_name);
         final EditText phone = (EditText) findViewById(R.id.et_phone);
-        final EditText lat = (EditText) findViewById(R.id.et_lat);
-        final EditText lon = (EditText) findViewById(R.id.et_lon);
         final Button registerButton = (Button) findViewById(R.id.btn_register);
+        final Button changeButton = (Button) findViewById(R.id.btn_change_number);
+
         phone.setEnabled(false);
         mAuth = FirebaseAuth.getInstance();
         if (mAuth != null) {
@@ -67,29 +90,46 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
             public void onClick(View view) {
                 final String nameText = name.getText().toString().trim();
                 final String phoneText = phone.getText().toString().trim();
-                final String lattitude = lat.getText().toString().trim();
-                final String longitude = lon.getText().toString().trim();
+                if (latOfSensor == 0 || lonOfSensor == 0) {
+                    Toast.makeText(getApplicationContext(), "Error getting location!", Toast.LENGTH_LONG).show();
+                } else {
+                    latitude = String.valueOf(latOfSensor);
+                    longitude = String.valueOf(lonOfSensor);
+                }
 
-                if (nameText.equals("") || phoneText.equals("") || bloodGroupText.equals("") || lattitude.equals("") || longitude.equals("")) {
+                if (nameText.equals("") || phoneText.equals("") || bloodGroupText.equals("") || latitude.equals("") || longitude.equals("")) {
+                    if (latitude.equals("") || longitude.equals("")) {
+                        Toast.makeText(getApplicationContext(), "Error getting location!", Toast.LENGTH_LONG).show();
 
-                    Snackbar snackbar = Snackbar.make(view, "Unsuccessful! Fill all fields", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null);
-                    View sbView = snackbar.getView();
-                    sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
-                    snackbar.show();
+                    } else {
 
+                        Snackbar snackbar = Snackbar.make(view, "Unsuccessful! Fill all fields", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null);
+                        View sbView = snackbar.getView();
+                        sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
+                        snackbar.show();
+
+                    }
 
                 } else {
                     DatabaseReference myRef = database.getReference("Users").child(mAuth.getCurrentUser().getUid());
-                    Register register = new Register(nameText, phoneText, bloodGroupText, lattitude, longitude);
+                    Register register = new Register(nameText, phoneText, bloodGroupText, latitude, longitude, getTimeStamp(), "false");
                     myRef.setValue(register);
-      //              FirebaseMessaging.getInstance().subscribeToTopic(bloodGroupText.toString());
+                    //              FirebaseMessaging.getInstance().subscribeToTopic(bloodGroupText.toString());
 
                     Toast.makeText(RegistrationActivity.this, "Successful Registration", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
                     finish();
 
                 }
+            }
+        });
+        changeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAuth.signOut();
+                startActivity(new Intent(RegistrationActivity.this, PhoneAuthActivity.class));
+                finish();
             }
         });
 
@@ -121,5 +161,11 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    public String getTimeStamp() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a 'Date: 'dd-MM-yyyy ");
+        String format = simpleDateFormat.format(new Date());
+        return format;
     }
 }

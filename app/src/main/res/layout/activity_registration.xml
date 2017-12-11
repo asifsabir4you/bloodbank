@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/background"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -57,25 +57,24 @@
 
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/et_lat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="lattitude" />
-        <EditText
-            android:id="@+id/et_lon"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="longitude" />
 
         <Button
             android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Register"
-            android:textColor="@color/colorPrimary" />
+            android:text="Register"
+            android:textAllCaps="false" />
 
-
+        <Button
+            android:id="@+id/btn_change_number"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="right"
+            android:layout_marginTop="20dp"
+            android:padding="2dp"
+            android:text="Change Number"
+            android:textAllCaps="false"
+            android:textSize="10dp" />
 
     </LinearLayout>
 </ScrollView>
