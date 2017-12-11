@@ -3,6 +3,7 @@ package com.example.asifsabir.blooddonor;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int REQUEST_CODE_PERMISSION = 2;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
-    LinearLayout userDataLayout;
+    LinearLayout userDataLayout,suspendLayout;
     ProgressBar progressBar;
     GPSTracker gps;
     double latitude, longitude;
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     String fullName = "", phone = "", bloodGroup = "", lat = "", lon = "";
     boolean userBan;
-
+ImageView warningImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +72,8 @@ public class MainActivity extends AppCompatActivity
         makeReqBtn = (Button) findViewById(R.id.btn_make_req);
         tvNotificationRange = (TextView) findViewById(R.id.tv_notification_range);
         userDataLayout = (LinearLayout) findViewById(R.id.layout_user_area);
+        suspendLayout = (LinearLayout) findViewById(R.id.layout_suspend);
+
         //subscribing to that blood group topics
         //checking settings
         checkSettingsData();
@@ -134,8 +138,7 @@ public class MainActivity extends AppCompatActivity
                     progressBar.setVisibility(View.GONE);
                     if (userBan==true) {
                         userDataLayout.setVisibility(View.GONE);
-                        tvFullName.setText("Your accound has been suspended!\n\nYou can no longer accept or \n make requests!");
-                        tvFullName.setTextColor(Color.RED);
+                        suspendLayout.setVisibility(View.VISIBLE);
                         FirebaseMessaging.getInstance().subscribeToTopic("banned");
                     } else {
                         tvFullName.setText("Welcome " + fullName);
