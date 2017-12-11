@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="background">#FFE4E1</color>
+    <color name="colorForTabs">#FFF5EE</color>
 
     <color name="colorGreen">@android:color/holo_green_light</color>
     <color name="colorBlue">@android:color/holo_blue_light</color>

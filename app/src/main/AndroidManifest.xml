@@ -3,8 +3,8 @@
     package="com.example.asifsabir.blooddonor">
 
     <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
-    <uses-permission android:name = "android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name = "android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -37,7 +37,7 @@
         <activity android:name=".MakeRequest"></activity>
         <activity android:name=".PhoneAuthActivity"></activity>
 
-
+        <activity android:name=".AboutPage"></activity>
         <activity android:name=".RegistrationActivity"></activity>
         <activity android:name=".SettingsActivity"></activity>
     </application>

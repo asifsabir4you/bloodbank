@@ -7,6 +7,7 @@
     android:background="@color/background"
     android:gravity="left"
     android:orientation="vertical"
+    android:padding="10dp"
     android:paddingLeft="15dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.asifsabir.blooddonor.MainActivity"
@@ -23,15 +24,16 @@
         android:textSize="25dp" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorForTabs"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@android:drawable/btn_star_big_off"
+            android:drawableLeft="@android:drawable/star_off"
             android:drawablePadding="15dp"
             android:text="you are  "
             android:textColor="@android:color/black"
@@ -56,8 +58,10 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorForTabs"
         android:orientation="horizontal">
 
         <TextView
@@ -81,8 +85,10 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorForTabs"
         android:orientation="horizontal">
 
         <TextView
@@ -105,8 +111,10 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorForTabs"
         android:orientation="horizontal">
 
         <TextView

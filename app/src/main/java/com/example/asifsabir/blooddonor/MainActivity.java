@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
     // GPSTracker class
     GPSTracker gps;
-    double latitude,longitude;
+    double latitude, longitude;
     Button makeReqBtn;
     TextView tvPhone, tvBloodGroup, tvFullName, tvLatLon;
     TextView tvNotificationRange;
@@ -90,8 +90,8 @@ public class MainActivity extends AppCompatActivity
         // check if GPS enabled
         if (gps.canGetLocation()) {
 
-             latitude = gps.getLatitude();
-             longitude = gps.getLongitude();
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
 
             // \n is for new line
             tvLatLon.setText("lattitude: " + latitude + "\n" + "longitude: " + longitude);
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity
                     tvFullName.setText("Welcome " + fullName);
                     tvPhone.setText(phone);
                     tvBloodGroup.setText(bloodGroup);
-              //      tvLatLon.setText("lattitude: " + lat + "\nlongitude:" + lon);
+                    //      tvLatLon.setText("lattitude: " + lat + "\nlongitude:" + lon);
                     //subscribing to the topics
                     String topics = "all";
                     if (bloodGroup.equals("A+")) topics = "Ap";
@@ -158,9 +158,9 @@ public class MainActivity extends AppCompatActivity
                 Intent i = new Intent(MainActivity.this, MakeRequest.class);
                 i.putExtra("fullName", fullName);
                 i.putExtra("phone", phone);
-                i.putExtra("latitude",latitude);
-                i.putExtra("longitude",longitude);
-                i.putExtra("uID",mAuth.getCurrentUser().getUid());
+                i.putExtra("latitude", latitude);
+                i.putExtra("longitude", longitude);
+                i.putExtra("uID", mAuth.getCurrentUser().getUid());
                 startActivity(i);
             }
         });
@@ -222,9 +222,15 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, PhoneAuthActivity.class));
             finish();
         } else if (id == R.id.nav_share) {
-            Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            String shareBody = "Want to be a part of noble work? Be a blood donor.Or search donor around you.\n IT'S FREE!\n\ndownload link:\n";
+            shareBody = shareBody + "https://play.google.com/store/apps/details?id=com.example.asifsabir.blooddonor";
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Donate blood or search donor!");
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(sharingIntent, "Share via"));
         } else if (id == R.id.nav_about) {
-            Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getApplicationContext(), AboutPage.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -242,7 +248,7 @@ public class MainActivity extends AppCompatActivity
             tvNotificationRange.setText(radiusRange + " km");
             tvNotificationRange.setTextColor(Color.BLACK);
         } else {
-            tvNotificationRange.setText("Disable");
+            tvNotificationRange.setText("Disabled");
             tvNotificationRange.setTextColor(Color.RED);
         }
     }
