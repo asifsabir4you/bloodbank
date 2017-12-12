@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int REQUEST_CODE_PERMISSION = 2;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
-    LinearLayout userDataLayout,suspendLayout;
+    LinearLayout userDataLayout, suspendLayout;
     ProgressBar progressBar;
     GPSTracker gps;
     double latitude, longitude;
@@ -56,7 +56,8 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     String fullName = "", phone = "", bloodGroup = "", lat = "", lon = "";
     boolean userBan;
-ImageView warningImage;
+    ImageView warningImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,7 +137,7 @@ ImageView warningImage;
                     lon = RegisteredUserData.lon.toString();
                     userBan = Boolean.valueOf(RegisteredUserData.userBan.toString());
                     progressBar.setVisibility(View.GONE);
-                    if (userBan==true) {
+                    if (userBan == true) {
                         userDataLayout.setVisibility(View.GONE);
                         suspendLayout.setVisibility(View.VISIBLE);
                         FirebaseMessaging.getInstance().subscribeToTopic("banned");
@@ -236,8 +237,12 @@ ImageView warningImage;
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_saved_req) {
-            Toast.makeText(this, "Saved requests", Toast.LENGTH_SHORT).show();
+        if (id == R.id.nav_my_req) {
+            startActivity(new Intent(getApplicationContext(), MyReqActivity.class));
+        } else if (id == R.id.nav_saved_req) {
+            startActivity(new Intent(getApplicationContext(), SavedReqActivity.class));
+
+
         } else if (id == R.id.nav_log_out) {
             FirebaseMessaging.getInstance().subscribeToTopic("none");
             mAuth.signOut();

@@ -40,6 +40,9 @@
         <activity android:name=".AboutPage"></activity>
         <activity android:name=".RegistrationActivity"></activity>
         <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".MyReqActivity"></activity>
+        <activity android:name=".SavedReqActivity"></activity>
+
     </application>
 
 </manifest>
