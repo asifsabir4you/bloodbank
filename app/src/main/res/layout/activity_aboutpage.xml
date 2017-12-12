@@ -30,32 +30,21 @@
             android:layout_margin="10dp"
             android:fontFamily="monospace"
             android:gravity="center"
-            android:text="About"
+            android:text="@string/app_name"
             android:textAllCaps="true"
             android:textColor="@color/colorPrimary"
             android:textSize="20dp"
             android:textStyle="bold" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="15dp"
-            android:background="@color/colorPrimary" />
+
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="15dp"
-            android:textAllCaps="true"
-            android:text="@string/app_name" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:fontFamily="serif"
+            android:fontFamily="monospace"
             android:layout_margin="5dp"
-            android:text="All rights reserved. Copyright 2017-18" />
+            android:text="All rights reserved.\n Copyright 2017-18" />
 
 
         <TextView

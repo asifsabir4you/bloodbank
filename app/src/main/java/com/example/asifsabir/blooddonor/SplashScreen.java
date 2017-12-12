@@ -5,9 +5,6 @@ package com.example.asifsabir.blooddonor;
  */
 
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.Manifest;
 
 import android.app.Activity;
@@ -19,10 +16,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -70,7 +65,7 @@ public class SplashScreen extends Activity {
     /**
      * Async Task to make http call
      */
-    private class PrefetchData extends AsyncTask<Void, Void, Void> {
+    private class PrefetchData extends AsyncTask<Object, Object, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -80,11 +75,13 @@ public class SplashScreen extends Activity {
         }
 
         @Override
-        protected Void doInBackground(Void... arg0) {
+        protected Void doInBackground(Object... arg0) {
             /* Will make http call here This call will download required data
              * before launching the app */
 
             checkDatabaseRegistrationData();
+
+
             return null;
         }
 
@@ -123,8 +120,9 @@ public class SplashScreen extends Activity {
                     }
                     finish();
                 }
-            }, 4000);
+            }, 5000);
         }
+
 
 
     }
@@ -187,7 +185,7 @@ public class SplashScreen extends Activity {
                     if (snapshot.hasChild(mAuth.getCurrentUser().getUid().toString())) {
                         //send to mainActivity
                         status = 2;
-                        return;
+                        return ;
                     } else {
                         //sending for registration
                         status = 1;
@@ -203,7 +201,6 @@ public class SplashScreen extends Activity {
 
         } else {
             status = 0;
-            return;
         }
     }
 

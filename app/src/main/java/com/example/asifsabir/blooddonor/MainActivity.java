@@ -35,6 +35,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by asifsabir on 11/11/17.
@@ -75,6 +79,8 @@ public class MainActivity extends AppCompatActivity
         userDataLayout = (LinearLayout) findViewById(R.id.layout_user_area);
         suspendLayout = (LinearLayout) findViewById(R.id.layout_suspend);
 
+        mAuth = FirebaseAuth.getInstance();
+
         //subscribing to that blood group topics
         //checking settings
         checkSettingsData();
@@ -105,6 +111,26 @@ public class MainActivity extends AppCompatActivity
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
 
+            DatabaseReference latRef = FirebaseDatabase.getInstance()
+                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
+                    .child("lat");
+            latRef.setValue(String.valueOf(latitude));
+
+            DatabaseReference lonRef = FirebaseDatabase.getInstance()
+                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
+                    .child("lon");
+            lonRef.setValue(String.valueOf(latitude));
+
+            DatabaseReference lastRef = FirebaseDatabase.getInstance()
+                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
+                    .child("lastEntry");
+            lastRef.setValue(String.valueOf(getTimeStamp()));
+
+            //saving to localDB
+            SharedPreferences.Editor editor = getSharedPreferences("gpsData", MODE_PRIVATE).edit();
+            editor.putString("dbLat", String.valueOf(latitude));
+            editor.putString("dbLon", String.valueOf(longitude));
+            editor.apply();
             // \n is for new line
             tvLatLon.setText("lattitude: " + latitude + "\n" + "longitude: " + longitude);
 
@@ -117,7 +143,6 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        mAuth = FirebaseAuth.getInstance();
         if (mAuth != null)
 
         {
@@ -140,7 +165,20 @@ public class MainActivity extends AppCompatActivity
                     if (userBan == true) {
                         userDataLayout.setVisibility(View.GONE);
                         suspendLayout.setVisibility(View.VISIBLE);
+
+                        if (bloodGroup.equals("A+")) topics = "Ap";
+                        else if (bloodGroup.equals("A-")) topics = "An";
+                        else if (bloodGroup.equals("B+")) topics = "Bp";
+                        else if (bloodGroup.equals("B-")) topics = "Bn";
+                        else if (bloodGroup.equals("AB+")) topics = "ABp";
+                        else if (bloodGroup.equals("AB-")) topics = "ABn";
+                        else if (bloodGroup.equals("O+")) topics = "Op";
+                        else if (bloodGroup.equals("O-")) topics = "On";
+                        else topics = "all";
+
+                        FirebaseMessaging.getInstance().unsubscribeFromTopic(topics);
                         FirebaseMessaging.getInstance().subscribeToTopic("banned");
+
                     } else {
                         tvFullName.setText("Welcome " + fullName);
                         tvPhone.setText(phone);
@@ -262,8 +300,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
         } else if (id == R.id.nav_about) {
             startActivity(new Intent(getApplicationContext(), AboutPage.class));
-        }
-        else {
+        } else {
             //do nothing
         }
 
@@ -297,6 +334,11 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         checkSettingsData();
+    }
+    public String getTimeStamp() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a\n'Date: 'dd-MM-yyyy ");
+        String format = simpleDateFormat.format(new Date());
+        return format;
     }
 }
 

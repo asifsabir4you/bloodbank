@@ -2,6 +2,7 @@ package com.example.asifsabir.blooddonor;
 
 import android.*;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -90,6 +91,13 @@ public class ShowRequest extends AppCompatActivity {
 
             currentLat = gps.getLatitude();
             currentLon = gps.getLongitude();
+
+            //saving to localDB//updating data
+            SharedPreferences.Editor editor = getSharedPreferences("gpsData", MODE_PRIVATE).edit();
+            editor.putString("dbLat", String.valueOf(currentLat));
+            editor.putString("dbLon", String.valueOf(currentLon));
+            editor.apply();
+
         } else {
             // can't get location
             // GPS or Network is not enabled
@@ -104,6 +112,10 @@ public class ShowRequest extends AppCompatActivity {
         double x = (currentLon - Double.valueOf(longitude)) * Math.cos((Double.valueOf(latitude) + currentLat) / 2);
         double y = (currentLat - Double.valueOf(latitude));
         double distance = Math.sqrt(x * x + y * y) * R;       */
+
+
+
+
 
         Location loc1 = new Location("");
         loc1.setLatitude(currentLat);
