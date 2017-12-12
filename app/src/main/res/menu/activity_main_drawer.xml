@@ -3,6 +3,11 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_my_req"
+            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:title="My Requests" />
+
+        <item
             android:id="@+id/nav_saved_req"
             android:icon="@android:drawable/ic_menu_sort_by_size"
             android:title="Saved Requests" />

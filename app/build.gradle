@@ -45,6 +45,9 @@ dependencies {
     compile 'com.google.firebase:firebase-database:11.0.0'  //10.2.1
     //firebae auth
     compile 'com.google.firebase:firebase-auth:11.0.0'
+    //ad
+    compile 'com.google.android.gms:play-services-ads:11.0.0'
+
 
 }
 

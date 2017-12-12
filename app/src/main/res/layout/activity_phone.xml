@@ -70,6 +70,8 @@
                 android:id="@+id/button_start_verification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/colorPrimaryDark"
                 android:layout_weight="1.0"
                 android:text="@string/start_phone_auth" />
 
@@ -79,6 +81,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:text="@string/verify_phone_auth"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/colorGreen"
                 android:visibility="gone" />
 
             <Button
@@ -87,6 +91,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:text="@string/resend_phone_auth"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/colorPrimaryDark"
                 android:visibility="gone" />
             <ProgressBar
                 android:layout_width="wrap_content"

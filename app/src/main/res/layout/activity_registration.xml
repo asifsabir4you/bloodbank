@@ -63,6 +63,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Register"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:textAllCaps="false" />
 
         <Button
@@ -72,6 +74,8 @@
             android:layout_gravity="right"
             android:layout_marginTop="20dp"
             android:padding="2dp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:text="Change Number"
             android:textAllCaps="false"
             android:textSize="10dp" />

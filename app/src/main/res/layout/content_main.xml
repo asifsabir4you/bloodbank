@@ -185,6 +185,8 @@
             android:layout_margin="10dp"
             android:layout_marginTop="10dp"
             android:text="make A blood Request"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:textSize="15dp" />
     </LinearLayout>
 </LinearLayout>

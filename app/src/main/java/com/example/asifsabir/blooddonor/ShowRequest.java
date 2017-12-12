@@ -7,15 +7,24 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Layout;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 /**
@@ -31,15 +40,26 @@ public class ShowRequest extends AppCompatActivity {
     private static final int REQUEST_CODE_PERMISSION = 2;
     String mPermission = android.Manifest.permission.ACCESS_FINE_LOCATION;
     double currentLat, currentLon;
+    LinearLayout layoutReqView;
     // GPSTracker class
     GPSTracker gps;
+    FirebaseAuth mAuth;
+    //add ad ad ad ad ad
+    private AdView mAdView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_request);
+        layoutReqView = (LinearLayout) findViewById(R.id.layout_req_view);
         getSupportActionBar().setTitle("Showing Request");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Here
 
+        //firebase database for saving
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //banner
+        mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         nametext = (TextView) findViewById(R.id.name);
         bloodGroupText = (TextView) findViewById(R.id.blood_group);
@@ -52,14 +72,15 @@ public class ShowRequest extends AppCompatActivity {
         callActionButton = (ImageButton) findViewById(R.id.call);
         btnSaveReq = (Button) findViewById(R.id.button_save);
         Intent intent = getIntent();
-        String name = intent.getStringExtra("name");
-        String bloodGroup = intent.getStringExtra("bloodGroup");
+        final String name = intent.getStringExtra("name");
+        final String bloodGroup = intent.getStringExtra("bloodGroup");
         phone = intent.getStringExtra("phone");
-        String location = intent.getStringExtra("location");
+        final String location = intent.getStringExtra("location");
         String latitude = intent.getStringExtra("latitude");
         String longitude = intent.getStringExtra("longitude");
-        String timeStamp = intent.getStringExtra("timeStamp");
+        final String timeStamp = intent.getStringExtra("timeStamp");
 
+        mAuth = FirebaseAuth.getInstance();
 
         // getting this users location data
         gps = new GPSTracker(ShowRequest.this);
@@ -91,15 +112,22 @@ public class ShowRequest extends AppCompatActivity {
         Location loc2 = new Location("");
         loc2.setLatitude(Double.valueOf(latitude));
         loc2.setLongitude(Double.valueOf(longitude));
-        double distance = loc1.distanceTo(loc2);
-
+        final double distance = loc1.distanceTo(loc2);
 
 
         nametext.setText(name);
         bloodGroupText.setText(bloodGroup);
         phoneText.setText(phone);
         locationText.setText(location);
-        distanceText.setText(latitude + "\n" + longitude+"\n"+distance+" m");
+
+        if (distance > 1000) {
+            int distanceFinal = (int) distance / 1000;
+            distanceText.setText(distanceFinal + " Km away");
+        } else {
+            int distanceFinal = (int) distance;
+            distanceText.setText(distanceFinal + " m only");
+        }
+
         requestTimeText.setText(timeStamp);
 
         callActionButton.setOnClickListener(new View.OnClickListener() {
@@ -112,7 +140,18 @@ public class ShowRequest extends AppCompatActivity {
         btnSaveReq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ShowRequest.this, "Request has been saved!", Toast.LENGTH_SHORT).show();
+                String uID = mAuth.getCurrentUser().getUid();
+                DatabaseReference savedReqRef = database.getReference("Users").child(uID).child("savedReq").push();
+                SavedReq savedReq = new SavedReq(bloodGroup, name, phone, location, String.valueOf((int) distance / 1000), timeStamp);
+
+                savedReqRef.setValue(savedReq);
+
+                Snackbar snackbar = Snackbar.make(layoutReqView, "Successful! Request has been sent.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null);
+                View sbView = snackbar.getView();
+                sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorGreen));
+                snackbar.show();
+
             }
         });
     }
@@ -179,7 +218,6 @@ public class ShowRequest extends AppCompatActivity {
         }
 
     }
-
 
 
 }

@@ -25,8 +25,9 @@ import java.util.Date;
 public class MakeRequest extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     String bloodGroupText = "";
-public double foundLatitude,foundLongitude;
+    public double foundLatitude, foundLongitude;
     String uID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,13 +60,12 @@ public double foundLatitude,foundLongitude;
         Bundle extras = getIntent().getExtras();
         String foundfullName = extras.getString("fullName");
         String foundPhone = extras.getString("phone");
-          foundLatitude = extras.getDouble("latitude");
-          foundLongitude = extras.getDouble("longitude");
+        foundLatitude = extras.getDouble("latitude");
+        foundLongitude = extras.getDouble("longitude");
         final String parsedLat = String.valueOf(foundLatitude);
         final String parsedLon = String.valueOf(foundLongitude);
 
         uID = extras.getString("uID");
-
 
 
 //        Toast.makeText(this, foundLatitude + "\n" + foundLongitude+"\n"+getTimeStamp()+"\n"+uID, Toast.LENGTH_SHORT).show();
@@ -94,9 +94,12 @@ public double foundLatitude,foundLongitude;
 
 
                 } else {
-                    DatabaseReference myRef = database.getReference("bloodRequest").push();
-                    BloodReq bloodReq = new BloodReq(nameText, phoneText, bloodGroupText, locationText, parsedLat, parsedLon,uID, getTimeStamp());
-                    myRef.setValue(bloodReq);
+                    DatabaseReference reqRef = database.getReference("bloodRequest").push();
+                    DatabaseReference myReqRef = database.getReference("Users").child(uID).child("myReq").push();
+
+                    BloodReq bloodReq = new BloodReq(nameText, phoneText, bloodGroupText, locationText, parsedLat, parsedLon, uID, getTimeStamp());
+                    reqRef.setValue(bloodReq);
+                    myReqRef.setValue(bloodReq);
 
                     Snackbar snackbar = Snackbar.make(view, "Successful! Request has been sent.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null);
@@ -144,7 +147,7 @@ public double foundLatitude,foundLongitude;
         return format;
     }
 
-    public String getuID(){
+    public String getuID() {
         return "test";
     }
 
