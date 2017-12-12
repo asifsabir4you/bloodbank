@@ -146,7 +146,7 @@ public class ShowRequest extends AppCompatActivity {
 
                 savedReqRef.setValue(savedReq);
 
-                Snackbar snackbar = Snackbar.make(layoutReqView, "Successful! Request has been sent.", Snackbar.LENGTH_LONG)
+                Snackbar snackbar = Snackbar.make(layoutReqView, "Request Saved!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null);
                 View sbView = snackbar.getView();
                 sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorGreen));

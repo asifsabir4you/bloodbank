@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     String fullName = "", phone = "", bloodGroup = "", lat = "", lon = "";
     boolean userBan;
-    ImageView warningImage;
+    String topics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +147,6 @@ public class MainActivity extends AppCompatActivity
                         tvBloodGroup.setText(bloodGroup);
                         //      tvLatLon.setText("lattitude: " + lat + "\nlongitude:" + lon);
                         //subscribing to the topics
-                        String topics;
                         if (bloodGroup.equals("A+")) topics = "Ap";
                         else if (bloodGroup.equals("A-")) topics = "An";
                         else if (bloodGroup.equals("B+")) topics = "Bp";
@@ -244,7 +243,7 @@ public class MainActivity extends AppCompatActivity
 
 
         } else if (id == R.id.nav_log_out) {
-            FirebaseMessaging.getInstance().subscribeToTopic("none");
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(topics);
             mAuth.signOut();
             startActivity(new Intent(MainActivity.this, PhoneAuthActivity.class));
             finish();
@@ -263,6 +262,9 @@ public class MainActivity extends AppCompatActivity
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
         } else if (id == R.id.nav_about) {
             startActivity(new Intent(getApplicationContext(), AboutPage.class));
+        }
+        else {
+            //do nothing
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
