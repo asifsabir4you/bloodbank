@@ -27,6 +27,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 /**
  * Created by asifsabir on 11/10/17.
@@ -80,6 +83,7 @@ public class ShowRequest extends AppCompatActivity {
         String latitude = intent.getStringExtra("latitude");
         String longitude = intent.getStringExtra("longitude");
         final String timeStamp = intent.getStringExtra("timeStamp");
+        final String reqId = intent.getStringExtra("reqId");
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -91,6 +95,23 @@ public class ShowRequest extends AppCompatActivity {
 
             currentLat = gps.getLatitude();
             currentLon = gps.getLongitude();
+//updating last lat long in firebase
+
+            DatabaseReference latRef = FirebaseDatabase.getInstance()
+                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
+                    .child("latitude");
+            latRef.setValue(String.valueOf(latitude));
+
+            DatabaseReference lonRef = FirebaseDatabase.getInstance()
+                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
+                    .child("longitude");
+            lonRef.setValue(String.valueOf(latitude));
+
+            DatabaseReference lastRef = FirebaseDatabase.getInstance()
+                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
+                    .child("lastEntry");
+            lastRef.setValue(String.valueOf(getTimeStamp()));
+
 
             //saving to localDB//updating data
             SharedPreferences.Editor editor = getSharedPreferences("gpsData", MODE_PRIVATE).edit();
@@ -153,10 +174,9 @@ public class ShowRequest extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String uID = mAuth.getCurrentUser().getUid();
-                DatabaseReference savedReqRef = database.getReference("Users").child(uID).child("savedReq").push();
-                SavedReq savedReq = new SavedReq(bloodGroup, name, phone, location, String.valueOf((int) distance / 1000), timeStamp);
 
-                savedReqRef.setValue(savedReq);
+                DatabaseReference savedReqRef = database.getReference("Users").child(uID).child("savedReq").push();
+                savedReqRef.child("reqID").setValue(reqId);
 
                 Snackbar snackbar = Snackbar.make(layoutReqView, "Request Saved!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null);
@@ -231,5 +251,9 @@ public class ShowRequest extends AppCompatActivity {
 
     }
 
-
+    public String getTimeStamp() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a 'Date: 'dd-MM-yyyy ");
+        String format = simpleDateFormat.format(new Date());
+        return format;
+    }
 }

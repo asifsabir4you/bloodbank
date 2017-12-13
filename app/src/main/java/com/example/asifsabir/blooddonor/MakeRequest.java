@@ -21,6 +21,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 public class MakeRequest extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -94,12 +95,16 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
 
 
                 } else {
-                    DatabaseReference reqRef = database.getReference("bloodRequest").push();
-                    DatabaseReference myReqRef = database.getReference("Users").child(uID).child("myReq").push();
+                    String uniqueID = UUID.randomUUID().toString();
 
-                    BloodReq bloodReq = new BloodReq(nameText, phoneText, bloodGroupText, locationText, parsedLat, parsedLon, uID, getTimeStamp());
+                    DatabaseReference reqRef = database.getReference("bloodRequest").push();
+                    String reqKey = reqRef.getKey();
+
+                   DatabaseReference myReqRef = database.getReference("Users").child(uID).child("myReq").push();
+                    myReqRef.child("reqID").setValue(reqKey);
+
+                    BloodReq bloodReq = new BloodReq(nameText, phoneText, bloodGroupText, locationText, parsedLat, parsedLon, uID, getTimeStamp(),"0");
                     reqRef.setValue(bloodReq);
-                    myReqRef.setValue(bloodReq);
 
                     Snackbar snackbar = Snackbar.make(view, "Successful! Request has been sent.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null);
@@ -133,6 +138,7 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivityIfNeeded(intent, 0);
+                finish();
                 return true;
             }
             default:
@@ -141,8 +147,14 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(MakeRequest.this,MainActivity.class));
+    }
+
     public String getTimeStamp() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a\n'Date: 'dd-MM-yyyy ");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a \n 'Date: 'dd-MM-yyyy ");
         String format = simpleDateFormat.format(new Date());
         return format;
     }

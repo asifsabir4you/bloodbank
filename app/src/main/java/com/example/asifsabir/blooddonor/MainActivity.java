@@ -111,22 +111,23 @@ public class MainActivity extends AppCompatActivity
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
 
+            //updating last lat long in firebase
+
             DatabaseReference latRef = FirebaseDatabase.getInstance()
                     .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
-                    .child("lat");
+                    .child("latitude");
             latRef.setValue(String.valueOf(latitude));
 
             DatabaseReference lonRef = FirebaseDatabase.getInstance()
                     .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
-                    .child("lon");
+                    .child("longitude");
             lonRef.setValue(String.valueOf(latitude));
 
             DatabaseReference lastRef = FirebaseDatabase.getInstance()
                     .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
                     .child("lastEntry");
             lastRef.setValue(String.valueOf(getTimeStamp()));
-
-            //saving to localDB
+            //saving to localDB for notifications
             SharedPreferences.Editor editor = getSharedPreferences("gpsData", MODE_PRIVATE).edit();
             editor.putString("dbLat", String.valueOf(latitude));
             editor.putString("dbLon", String.valueOf(longitude));
@@ -158,8 +159,6 @@ public class MainActivity extends AppCompatActivity
                     fullName = RegisteredUserData.fullName.toString();
                     phone = RegisteredUserData.phone.toString();
                     bloodGroup = RegisteredUserData.bloodGroup.toString();
-                    lat = RegisteredUserData.lat.toString();
-                    lon = RegisteredUserData.lon.toString();
                     userBan = Boolean.valueOf(RegisteredUserData.userBan.toString());
                     progressBar.setVisibility(View.GONE);
                     if (userBan == true) {
@@ -222,6 +221,7 @@ public class MainActivity extends AppCompatActivity
                 i.putExtra("longitude", longitude);
                 i.putExtra("uID", mAuth.getCurrentUser().getUid());
                 startActivity(i);
+                finish();
             }
         });
 
@@ -336,7 +336,7 @@ public class MainActivity extends AppCompatActivity
         checkSettingsData();
     }
     public String getTimeStamp() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a\n'Date: 'dd-MM-yyyy ");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a 'Date: 'dd-MM-yyyy ");
         String format = simpleDateFormat.format(new Date());
         return format;
     }

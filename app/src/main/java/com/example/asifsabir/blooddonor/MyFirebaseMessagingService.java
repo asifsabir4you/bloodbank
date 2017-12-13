@@ -77,7 +77,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 showNotification(remoteMessage.getData().get("name"), remoteMessage.getData().get("bloodGroup"),
                         remoteMessage.getData().get("phone"), remoteMessage.getData().get("location"),
                         remoteMessage.getData().get("latitude"), remoteMessage.getData().get("longitude")
-                        , remoteMessage.getData().get("timeStamp"));
+                        , remoteMessage.getData().get("timeStamp"),remoteMessage.getData().get("reqId"));
             }
             //else do nothing ! simple
 
@@ -93,7 +93,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void showNotification(String name, String bloodGroup,
                                   String phone, String location,
                                   String latitude, String longitude,
-                                  String timeStamp) {
+                                  String timeStamp,String reqId) {
         Intent intent = new Intent(this, ShowRequest.class);
 
         intent.putExtra("name", name);
@@ -103,6 +103,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra("latitude", latitude);
         intent.putExtra("longitude", longitude);
         intent.putExtra("timeStamp", timeStamp);
+        intent.putExtra("reqId", reqId);
 
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

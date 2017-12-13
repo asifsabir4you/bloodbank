@@ -14,6 +14,7 @@ public class BloodReq {
     public String longitude;
     public String uID;
     public String timeStamp;
+    public String view;
 
 
     public BloodReq() {
@@ -23,7 +24,7 @@ public class BloodReq {
     public BloodReq(String name, String phone,
                     String bloodGroup, String location,
                     String latitude, String longitude,
-                    String uID, String timeStamp) {
+                    String uID, String timeStamp,String view) {
         this.name = name;
         this.phone = phone;
         this.bloodGroup = bloodGroup;
@@ -32,5 +33,6 @@ public class BloodReq {
         this.longitude=longitude;
         this.uID=uID;
         this.timeStamp=timeStamp;
+        this.view=view;
     }
 }
