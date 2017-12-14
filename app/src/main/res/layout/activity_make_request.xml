@@ -60,7 +60,9 @@
             android:id="@+id/et_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="location" />
+            android:hint="patient's Location"
+
+            />
 
         <Button
             android:id="@+id/btn_request"
@@ -76,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="5dp"
-            android:text="* remember you can make blood request once daily."
+            android:text="* Remember you can make blood request once daily."
             android:textColor="@color/colorPrimary"
             android:textSize="12dp" />
 

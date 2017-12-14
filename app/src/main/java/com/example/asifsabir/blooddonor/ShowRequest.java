@@ -24,8 +24,12 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -126,16 +130,23 @@ public class ShowRequest extends AppCompatActivity {
             gps.showSettingsAlert();
         }
 
+        //incrementing view
+        final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("bloodRequest").child(reqId).child("view");
+        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                String count = snapshot.getValue(String.class);
+                int countNum = Integer.parseInt(count);
+                ++countNum;
+                rootRef.setValue(String.valueOf(countNum));
 
-//calculating distances
-/*
-        int R = 6371; // km
-        double x = (currentLon - Double.valueOf(longitude)) * Math.cos((Double.valueOf(latitude) + currentLat) / 2);
-        double y = (currentLat - Double.valueOf(latitude));
-        double distance = Math.sqrt(x * x + y * y) * R;       */
+            }
 
-
-
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(ShowRequest.this, "Error happened in fetching user data!", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         Location loc1 = new Location("");
@@ -176,7 +187,7 @@ public class ShowRequest extends AppCompatActivity {
                 String uID = mAuth.getCurrentUser().getUid();
 
                 DatabaseReference savedReqRef = database.getReference("Users").child(uID).child("savedReq").push();
-                savedReqRef.child("reqID").setValue(reqId);
+                savedReqRef.child("reqId").setValue(reqId);
 
                 Snackbar snackbar = Snackbar.make(layoutReqView, "Request Saved!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null);

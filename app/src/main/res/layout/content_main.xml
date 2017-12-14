@@ -91,7 +91,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="  blood donor"
+                android:text="  blood hero"
                 android:textColor="@android:color/black"
                 android:textSize="20dp" />
 

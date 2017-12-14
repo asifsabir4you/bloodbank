@@ -21,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +41,6 @@ public class SplashScreen extends Activity {
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 2;
     // Splash screen timer
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
-
     TextView appName;
 
     @Override
@@ -51,7 +51,8 @@ public class SplashScreen extends Activity {
         appName = (TextView) findViewById(R.id.tv_appName);
         dropletAnim = AnimationUtils.loadAnimation(this, R.anim.blood_drop_anim);
         appNameAnim = AnimationUtils.loadAnimation(this, R.anim.app_name_anim);
-
+        bloodDrop.setAnimation(dropletAnim);
+        appName.setAnimation(appNameAnim);
 
         if (Build.VERSION.SDK_INT >= 23) {
             permissionCheck();
@@ -88,8 +89,6 @@ public class SplashScreen extends Activity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            bloodDrop.setAnimation(dropletAnim);
-            appName.setAnimation(appNameAnim);
             // close this activity
             new Handler().postDelayed(new Runnable() {
             /*

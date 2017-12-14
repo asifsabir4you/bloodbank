@@ -154,7 +154,7 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
     }
 
     public String getTimeStamp() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a \n 'Date: 'dd-MM-yyyy ");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a \n'Date: 'dd-MM-yyyy ");
         String format = simpleDateFormat.format(new Date());
         return format;
     }
