@@ -95,7 +95,7 @@ public class ShowRequest extends AppCompatActivity {
         gps = new GPSTracker(ShowRequest.this);
 
         // check if GPS enabled
-        if (gps.canGetLocation()) {
+        if (gps.canGetLocation() && gps.getLatitude()!=0) {
 
             currentLat = gps.getLatitude();
             currentLon = gps.getLongitude();

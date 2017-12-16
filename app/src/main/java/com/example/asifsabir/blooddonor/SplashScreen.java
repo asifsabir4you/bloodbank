@@ -40,6 +40,8 @@ public class SplashScreen extends Activity {
     Animation dropletAnim, appNameAnim;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 2;
     // Splash screen timer
+    GPSTracker gps;
+    TextView tvBottom;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
     TextView appName;
 
@@ -49,10 +51,15 @@ public class SplashScreen extends Activity {
         setContentView(R.layout.activity_splash);
         bloodDrop = (ImageView) findViewById(R.id.iv_bloodDrop);
         appName = (TextView) findViewById(R.id.tv_appName);
+        tvBottom = (TextView) findViewById(R.id.tv_bottom_tag);
+
         dropletAnim = AnimationUtils.loadAnimation(this, R.anim.blood_drop_anim);
         appNameAnim = AnimationUtils.loadAnimation(this, R.anim.app_name_anim);
         bloodDrop.setAnimation(dropletAnim);
         appName.setAnimation(appNameAnim);
+
+
+        gps = new GPSTracker(SplashScreen.this);
 
         if (Build.VERSION.SDK_INT >= 23) {
             permissionCheck();
@@ -79,8 +86,7 @@ public class SplashScreen extends Activity {
         protected Void doInBackground(Object... arg0) {
             /* Will make http call here This call will download required data
              * before launching the app */
-
-            checkDatabaseRegistrationData();
+          gps.getLocation();
 
 
             return null;
@@ -90,38 +96,8 @@ public class SplashScreen extends Activity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             // close this activity
-            new Handler().postDelayed(new Runnable() {
-            /*
-             * Showing splash screen with a timer. This will be useful when you
-             * want to show case your app logo / company
-             */
-
-                @Override
-                public void run() {
-                    // This method will be executed once the timer is over
-                    // Start your app main activity
-                    Intent iMain = new Intent(SplashScreen.this, MainActivity.class);
-                    Intent iAuth = new Intent(SplashScreen.this, PhoneAuthActivity.class);
-                    Intent iReg = new Intent(SplashScreen.this, RegistrationActivity.class);
-
-                    if (status == 0) {
-                        startActivity(iAuth);
-                        //    Toast.makeText(SplashScreen.this, "auth", Toast.LENGTH_SHORT).show();
-                    } else if (status == 1) {
-                        startActivity(iReg);
-                        //  Toast.makeText(SplashScreen.this, "refg", Toast.LENGTH_SHORT).show();
-                    } else if (status == 2) {
-                        startActivity(iMain);
-                        //    Toast.makeText(SplashScreen.this, "main", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        //do nothing
-                    }
-                    finish();
-                }
-            }, 5000);
+            checkDatabaseRegistrationData();
         }
-
 
 
     }
@@ -184,10 +160,12 @@ public class SplashScreen extends Activity {
                     if (snapshot.hasChild(mAuth.getCurrentUser().getUid().toString())) {
                         //send to mainActivity
                         status = 2;
-                        return ;
+                        nextActivityThing();
+                        return;
                     } else {
                         //sending for registration
                         status = 1;
+                        nextActivityThing();
                         return;
                     }
                 }
@@ -199,7 +177,9 @@ public class SplashScreen extends Activity {
             });
 
         } else {
+            //sending for auth
             status = 0;
+            nextActivityThing();
         }
     }
 
@@ -220,6 +200,39 @@ public class SplashScreen extends Activity {
             // result of the request.
 
         }
+    }
+
+    public void nextActivityThing() {
+
+        new Handler().postDelayed(new Runnable() {
+            /*
+             * Showing splash screen with a timer. This will be useful when you
+             * want to show case your app logo / company
+             */
+
+            @Override
+            public void run() {
+                // This method will be executed once the timer is over
+                // Start your app main activity
+                Intent iMain = new Intent(SplashScreen.this, MainActivity.class);
+                Intent iAuth = new Intent(SplashScreen.this, PhoneAuthActivity.class);
+                Intent iReg = new Intent(SplashScreen.this, RegistrationActivity.class);
+
+                if (status == 0) {
+                    startActivity(iAuth);
+                    //    Toast.makeText(SplashScreen.this, "auth", Toast.LENGTH_SHORT).show();
+                } else if (status == 1) {
+                    startActivity(iReg);
+                    //  Toast.makeText(SplashScreen.this, "refg", Toast.LENGTH_SHORT).show();
+                } else if (status == 2) {
+                    startActivity(iMain);
+                    //    Toast.makeText(SplashScreen.this, "main", Toast.LENGTH_SHORT).show();
+                } else {
+                    //do nothing
+                }
+                finish();
+            }
+        }, 1000);
     }
 
 }

@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity
         gps = new GPSTracker(MainActivity.this);
 
         // check if GPS enabled
-        if (gps.canGetLocation()) {
+        if (gps.canGetLocation() && gps.getLatitude() != 0) {
 
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
@@ -140,6 +140,8 @@ public class MainActivity extends AppCompatActivity
             // can't get location
             // GPS or Network is not enabled
             // Ask user to enable GPS/network in settings
+            tvLatLon.setText("Error");
+            tvLatLon.setTextColor(Color.RED);
             gps.showSettingsAlert();
         }
 
@@ -335,6 +337,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         checkSettingsData();
     }
+
     public String getTimeStamp() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a 'Date: 'dd-MM-yyyy ");
         String format = simpleDateFormat.format(new Date());

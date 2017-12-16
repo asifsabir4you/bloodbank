@@ -59,11 +59,12 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
 
         // check if GPS enabled
         if (gps.canGetLocation()) {
-
+            gps.getLocation();
             latOfSensor = gps.getLatitude();
             lonOfSensor = gps.getLongitude();
 
         } else {
+            Toast.makeText(getApplicationContext(), "Error getting location!", Toast.LENGTH_SHORT).show();
             // can't get location
             // GPS or Network is not enabled
             // Ask user to enable GPS/network in settings
@@ -91,7 +92,11 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                 final String nameText = name.getText().toString().trim();
                 final String phoneText = phone.getText().toString().trim();
                 if (latOfSensor == 0 || lonOfSensor == 0) {
+                    gps.getLocation();
+                    latOfSensor = gps.getLatitude();
+                    lonOfSensor = gps.getLongitude();
                     Toast.makeText(getApplicationContext(), "Error getting location!", Toast.LENGTH_LONG).show();
+                    Log.e("Error","location error1");
                 } else {
                     latitude = String.valueOf(latOfSensor);
                     longitude = String.valueOf(lonOfSensor);
@@ -100,7 +105,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                 if (nameText.equals("") || phoneText.equals("") || bloodGroupText.equals("") || latitude.equals("") || longitude.equals("")) {
                     if (latitude.equals("") || longitude.equals("")) {
                         Toast.makeText(getApplicationContext(), "Error getting location!", Toast.LENGTH_LONG).show();
-
+                        Log.e("Error","location error2");
                     } else {
 
                         Snackbar snackbar = Snackbar.make(view, "Unsuccessful! Fill all fields", Snackbar.LENGTH_LONG)
