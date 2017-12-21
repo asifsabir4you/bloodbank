@@ -55,7 +55,7 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
         final EditText name = (EditText) findViewById(R.id.et_name);
         final EditText phone = (EditText) findViewById(R.id.et_phone);
         final EditText location = (EditText) findViewById(R.id.et_location);
-        Button requestButton = (Button) findViewById(R.id.btn_request);
+        final Button requestButton = (Button) findViewById(R.id.btn_request);
 
         //retrieving intent data
         Bundle extras = getIntent().getExtras();
@@ -89,18 +89,21 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
                     View sbView = snackbar.getView();
                     sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
                     snackbar.show();
+
 //
 //                    Snackbar.make(view, "Unsuccessful! Fill all fields", Snackbar.LENGTH_LONG)
 //                            .setAction("Action", null).show();
 
 
                 } else {
-                    String uniqueID = UUID.randomUUID().toString();
 
                     DatabaseReference reqRef = database.getReference("bloodRequest").push();
                     String reqKey = reqRef.getKey();
 
                    DatabaseReference myReqRef = database.getReference("Users").child(uID).child("myReq").push();
+                    DatabaseReference myReqTimeRef = database.getReference("Users").child(uID).child("lastReqTime");
+
+                    myReqTimeRef.setValue(String.valueOf(System.currentTimeMillis()));
                     myReqRef.child("reqID").setValue(reqKey);
 
                     BloodReq bloodReq = new BloodReq(nameText, phoneText, bloodGroupText, locationText, parsedLat, parsedLon, uID, getTimeStamp(),"0");
@@ -111,6 +114,8 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
                     View sbView = snackbar.getView();
                     sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorGreen));
                     snackbar.show();
+                    requestButton.setVisibility(View.INVISIBLE);
+
 
                 }
             }
@@ -154,13 +159,10 @@ public class MakeRequest extends AppCompatActivity implements AdapterView.OnItem
     }
 
     public String getTimeStamp() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a \n'Date: 'dd-MM-yyyy ");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Date: 'dd-MM-yyyy ' Time: 'KK:mm a ");
         String format = simpleDateFormat.format(new Date());
         return format;
     }
 
-    public String getuID() {
-        return "test";
-    }
 
 }

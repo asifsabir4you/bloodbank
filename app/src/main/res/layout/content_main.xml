@@ -18,8 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="150dp"
@@ -184,9 +184,24 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:layout_marginTop="10dp"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:text="make A blood Request"
             android:textColor="@android:color/white"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:textSize="15dp" />
+            android:textSize="15dp"
+            android:visibility="gone" />
+
+
+
+
+            <TextView
+                android:id="@+id/tv_timer"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginTop="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark"
+                 />
     </LinearLayout>
 </LinearLayout>

@@ -187,13 +187,14 @@ public class ShowRequest extends AppCompatActivity {
                 String uID = mAuth.getCurrentUser().getUid();
 
                 DatabaseReference savedReqRef = database.getReference("Users").child(uID).child("savedReq").push();
-                savedReqRef.child("reqId").setValue(reqId);
+                savedReqRef.child("reqID").setValue(reqId);
 
                 Snackbar snackbar = Snackbar.make(layoutReqView, "Request Saved!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null);
                 View sbView = snackbar.getView();
                 sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorGreen));
                 snackbar.show();
+                btnSaveReq.setVisibility(View.GONE);
 
             }
         });

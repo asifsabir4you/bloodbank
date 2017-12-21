@@ -13,6 +13,11 @@
         android:roundIcon="@drawable/blood_drop"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCdAIgQezzRP260GI56dABQHMvJsoocTOs" />
+
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -42,6 +47,7 @@
         <activity android:name=".SettingsActivity"></activity>
         <activity android:name=".MyReqActivity"></activity>
         <activity android:name=".SavedReqActivity"></activity>
+        <activity android:name=".ShowDonorsMapActivity"></activity>
 
     </application>
 

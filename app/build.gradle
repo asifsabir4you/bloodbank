@@ -5,7 +5,7 @@ android {
     buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "com.example.asifsabir.blooddonor"
-        minSdkVersion 19
+        minSdkVersion 16 //19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -48,7 +48,12 @@ dependencies {
 
     //ad
     compile 'com.google.android.gms:play-services-ads:11.0.0'
+    //list view
+    compile 'com.android.support:recyclerview-v7:26+'
 
+    compile 'com.android.support:cardview-v7:26+'
+    //map
+    compile 'com.google.android.gms:play-services-maps:11.0.0'
 
 }
 

@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.test.mock.MockPackageManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private static final int REQUEST_CODE_PERMISSION = 2;
+    long lastReqTimeLong;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
     LinearLayout userDataLayout, suspendLayout;
     ProgressBar progressBar;
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     double latitude, longitude;
     Button makeReqBtn;
     TextView tvPhone, tvBloodGroup, tvFullName, tvLatLon;
-    TextView tvNotificationRange;
+    TextView tvNotificationRange, tvTimer;
     private FirebaseAuth mAuth;
     String fullName = "", phone = "", bloodGroup = "", lat = "", lon = "";
     boolean userBan;
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity
         tvPhone = (TextView) findViewById(R.id.tv_phone);
         tvLatLon = (TextView) findViewById(R.id.tv_lat_lon);
         tvBloodGroup = (TextView) findViewById(R.id.tv_blood_group);
+        tvTimer = (TextView) findViewById(R.id.tv_timer);
         makeReqBtn = (Button) findViewById(R.id.btn_make_req);
         tvNotificationRange = (TextView) findViewById(R.id.tv_notification_range);
         userDataLayout = (LinearLayout) findViewById(R.id.layout_user_area);
@@ -84,7 +87,7 @@ public class MainActivity extends AppCompatActivity
         //subscribing to that blood group topics
         //checking settings
         checkSettingsData();
-
+        checkReqData();
         //getting locations
 
         try {
@@ -121,7 +124,7 @@ public class MainActivity extends AppCompatActivity
             DatabaseReference lonRef = FirebaseDatabase.getInstance()
                     .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
                     .child("longitude");
-            lonRef.setValue(String.valueOf(latitude));
+            lonRef.setValue(String.valueOf(longitude));
 
             DatabaseReference lastRef = FirebaseDatabase.getInstance()
                     .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
@@ -150,7 +153,7 @@ public class MainActivity extends AppCompatActivity
 
         {
             //checking whether the user is registered or not, if then send to MainActivity
-            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Users").child(mAuth.getCurrentUser().getUid().toString());
+            final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference("Users").child(mAuth.getCurrentUser().getUid().toString());
             rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
@@ -159,6 +162,7 @@ public class MainActivity extends AppCompatActivity
 
 
                     fullName = RegisteredUserData.fullName.toString();
+
                     phone = RegisteredUserData.phone.toString();
                     bloodGroup = RegisteredUserData.bloodGroup.toString();
                     userBan = Boolean.valueOf(RegisteredUserData.userBan.toString());
@@ -278,6 +282,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_my_req) {
             startActivity(new Intent(getApplicationContext(), MyReqActivity.class));
+        } else if (id == R.id.nav_map) {
+            startActivity(new Intent(getApplicationContext(), ShowDonorsMapActivity.class));
         } else if (id == R.id.nav_saved_req) {
             startActivity(new Intent(getApplicationContext(), SavedReqActivity.class));
 
@@ -342,6 +348,58 @@ public class MainActivity extends AppCompatActivity
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a 'Date: 'dd-MM-yyyy ");
         String format = simpleDateFormat.format(new Date());
         return format;
+    }
+
+
+    public void checkReqData() {
+        if (mAuth != null)
+
+        {
+            //checking whether the user is registered or not, if then send to MainActivity
+            final DatabaseReference userRef = FirebaseDatabase.getInstance()
+                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
+                    .child("lastReqTime");
+
+// Attach a listener to read the data at our posts reference
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String lastReqTime = dataSnapshot.getValue(String.class);
+                    if(lastReqTime!=null){
+                        lastReqTimeLong = Long.parseLong(lastReqTime);
+                        Log.d("time",lastReqTime);
+
+                        if (lastReqTimeLong + 24 * 60 * 60 * 1000 > System.currentTimeMillis()) {
+                            showTimer();
+                        } else {
+                            makeReqBtn.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    else{
+                        //never made a request ; open
+                        makeReqBtn.setVisibility(View.VISIBLE);
+
+                    }
+
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(MainActivity.this, "Last req time reading failed!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void showTimer() {
+        tvTimer.setVisibility(View.VISIBLE);
+        long timeDiffInMilliseconds =  (lastReqTimeLong + 24 * 60 * 60 * 1000 - System.currentTimeMillis());
+
+        //  int seconds = (int) (timeInMilliseconds / 1000) % 60 ;
+        long minutes = ((timeDiffInMilliseconds / (1000 * 60)) % 60);
+        long hours = ((timeDiffInMilliseconds / (1000 * 60 * 60)) % 24);
+        tvTimer.setText("please wait "+hours + " hours " + minutes + " minutes \n"+"for making further requests.");
     }
 }
 
