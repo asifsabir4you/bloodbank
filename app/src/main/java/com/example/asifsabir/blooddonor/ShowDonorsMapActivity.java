@@ -87,6 +87,7 @@ public class ShowDonorsMapActivity extends AppCompatActivity implements OnMapRea
                             .title(donorBloodGroup)
                             .snippet(donorName)
                             .visible(true)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                             .position(new LatLng(
                                     latitude,
                                     longitude
@@ -106,9 +107,9 @@ public class ShowDonorsMapActivity extends AppCompatActivity implements OnMapRea
         LatLng YourPosition = new LatLng(Double.parseDouble(dbLat), Double.parseDouble(dbLon));
         Marker mMarker = googleMap.addMarker(new MarkerOptions()
                 .position(YourPosition).snippet("this is you.")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                 .title("You!"));
 
-        Log.d("map", "you plotting!" + dbLat + "||" + dbLon);
 
 
         googleMap.addCircle(new CircleOptions()

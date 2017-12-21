@@ -130,7 +130,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     //creating ID using date stamp
     public int createID() {
         Date now = new Date();
-        int id = Integer.parseInt(new SimpleDateFormat("ddHHmmssSS", Locale.US).format(now));
+        int id = Integer.parseInt(new SimpleDateFormat("ddHHmmss", Locale.US).format(now));
         return id;
     }
 

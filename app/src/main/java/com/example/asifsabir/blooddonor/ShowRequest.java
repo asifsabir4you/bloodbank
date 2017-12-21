@@ -4,6 +4,7 @@ import android.*;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -23,6 +24,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,6 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -39,8 +49,10 @@ import java.util.Date;
  * Created by asifsabir on 11/10/17.
  */
 
-public class ShowRequest extends AppCompatActivity {
+public class ShowRequest extends AppCompatActivity implements OnMapReadyCallback {
 
+    //location found from firebase service intent exta
+    String latitude, longitude;
     TextView nametext, bloodGroupText, phoneText, locationText, distanceText, requestTimeText;
     ImageButton callActionButton;
     public static String phone;
@@ -61,6 +73,11 @@ public class ShowRequest extends AppCompatActivity {
         layoutReqView = (LinearLayout) findViewById(R.id.layout_req_view);
         getSupportActionBar().setTitle("Showing Request");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Here
+//making map ready
+
+        SupportMapFragment fm = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_request);
+        fm.getMapAsync(this);
+
 
         //firebase database for saving
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -84,8 +101,8 @@ public class ShowRequest extends AppCompatActivity {
         final String bloodGroup = intent.getStringExtra("bloodGroup");
         phone = intent.getStringExtra("phone");
         final String location = intent.getStringExtra("location");
-        String latitude = intent.getStringExtra("latitude");
-        String longitude = intent.getStringExtra("longitude");
+        latitude = intent.getStringExtra("latitude");
+        longitude = intent.getStringExtra("longitude");
         final String timeStamp = intent.getStringExtra("timeStamp");
         final String reqId = intent.getStringExtra("reqId");
 
@@ -95,7 +112,7 @@ public class ShowRequest extends AppCompatActivity {
         gps = new GPSTracker(ShowRequest.this);
 
         // check if GPS enabled
-        if (gps.canGetLocation() && gps.getLatitude()!=0) {
+        if (gps.canGetLocation() && gps.getLatitude() != 0) {
 
             currentLat = gps.getLatitude();
             currentLon = gps.getLongitude();
@@ -268,4 +285,49 @@ public class ShowRequest extends AppCompatActivity {
         String format = simpleDateFormat.format(new Date());
         return format;
     }
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        ArrayList pointsArr = null;
+        PolylineOptions polylineOptions;
+
+
+        googleMap.getUiSettings().setZoomControlsEnabled(false);
+        googleMap.getUiSettings().setCompassEnabled(true);
+        googleMap.setPadding(0, 0, 0, 100);
+
+        //collecting co-ordinate points
+        pointsArr = new ArrayList<>();
+        pointsArr.add(new LatLng(currentLat, currentLon));
+        pointsArr.add(new LatLng(Double.valueOf(latitude), Double.valueOf(longitude)));
+
+        //draw polyline on google map
+
+
+        //adding your marker position
+        googleMap.addMarker(new MarkerOptions()
+                .position((LatLng) pointsArr.get(0))
+                .title("You")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))).showInfoWindow();
+
+//adding requesters postion
+        googleMap.addMarker(new MarkerOptions()
+                .position((LatLng) pointsArr.get(1))
+                .title("Requester")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))).showInfoWindow();
+
+
+        //draw polyline
+        polylineOptions = new PolylineOptions();
+        polylineOptions.color(Color.RED);
+        polylineOptions.width(5);
+        polylineOptions.addAll(pointsArr);
+        googleMap.addPolyline(polylineOptions);
+
+        //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLat, currentLon), 8));
+
+    }
 }
+
