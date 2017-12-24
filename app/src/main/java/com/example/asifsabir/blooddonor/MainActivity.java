@@ -1,11 +1,13 @@
 package com.example.asifsabir.blooddonor;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -36,6 +38,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -49,13 +52,12 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ConnectivityReceiver.ConnectivityReceiverListener {
-
     LinearLayout layoutMainActivity;
     private static final int REQUEST_CODE_PERMISSION = 2;
     long lastReqTimeLong;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
     LinearLayout userDataLayout, suspendLayout;
-    ProgressBar progressBar;
+    ProgressBar progressBar, gpsProgressBar;
     GPSTracker gps;
     double latitude, longitude;
     Button makeReqBtn;
@@ -65,6 +67,8 @@ public class MainActivity extends AppCompatActivity
     String fullName = "", phone = "", bloodGroup = "", lat = "", lon = "";
     boolean userBan;
     String topics;
+    final Handler ha = new Handler();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         layoutMainActivity = (LinearLayout) findViewById(R.id.layout_main_activity);
         progressBar = (ProgressBar) findViewById(R.id.pb_loading);
+        gpsProgressBar = (ProgressBar) findViewById(R.id.gps_progressbar);
         tvFullName = (TextView) findViewById(R.id.tv_full_name);
         tvPhone = (TextView) findViewById(R.id.tv_phone);
         tvLatLon = (TextView) findViewById(R.id.tv_lat_lon);
@@ -85,23 +90,14 @@ public class MainActivity extends AppCompatActivity
         userDataLayout = (LinearLayout) findViewById(R.id.layout_user_area);
         suspendLayout = (LinearLayout) findViewById(R.id.layout_suspend);
 
-        if(!ConnectivityReceiver.isConnected()){
+        if (!ConnectivityReceiver.isConnected()) {
             checkConnection();
         }
-
-
 
         mAuth = FirebaseAuth.getInstance();
 
 
-
-
-
         //subscribing to that blood group topics
-        //checking settings
-        checkSettingsData();
-        checkReqData();
-        //getting locations
 
         try {
             if (ActivityCompat.checkSelfPermission(this, mPermission)
@@ -120,46 +116,12 @@ public class MainActivity extends AppCompatActivity
 
         // show location button click event
         gps = new GPSTracker(MainActivity.this);
-
-        // check if GPS enabled
-        if (gps.canGetLocation() && gps.getLatitude() != 0) {
-
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
-
-            //updating last lat long in firebase
-
-            DatabaseReference latRef = FirebaseDatabase.getInstance()
-                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
-                    .child("latitude");
-            latRef.setValue(String.valueOf(latitude));
-
-            DatabaseReference lonRef = FirebaseDatabase.getInstance()
-                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
-                    .child("longitude");
-            lonRef.setValue(String.valueOf(longitude));
-
-            DatabaseReference lastRef = FirebaseDatabase.getInstance()
-                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
-                    .child("lastEntry");
-            lastRef.setValue(String.valueOf(getTimeStamp()));
-            //saving to localDB for notifications
-            SharedPreferences.Editor editor = getSharedPreferences("gpsData", MODE_PRIVATE).edit();
-            editor.putString("dbLat", String.valueOf(latitude));
-            editor.putString("dbLon", String.valueOf(longitude));
-            editor.apply();
-            // \n is for new line
-            tvLatLon.setText("lattitude: " + latitude + "\n" + "longitude: " + longitude);
-
-
-        } else {
-            // can't get location
-            // GPS or Network is not enabled
-            // Ask user to enable GPS/network in settings
-            tvLatLon.setText("Error");
-            tvLatLon.setTextColor(Color.RED);
-            gps.showSettingsAlert();
-        }
+        //checking sync to db and showin lcoation condition in UI
+        syncGPS();
+        // check parameter of settings
+        checkSettingsData();
+        //show user the MAKE REQ  button?
+        checkReqData();
 
 
         if (mAuth != null)
@@ -234,14 +196,20 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if (ConnectivityReceiver.isConnected()) {
-                    Intent i = new Intent(MainActivity.this, MakeRequest.class);
-                    i.putExtra("fullName", fullName);
-                    i.putExtra("phone", phone);
-                    i.putExtra("latitude", latitude);
-                    i.putExtra("longitude", longitude);
-                    i.putExtra("uID", mAuth.getCurrentUser().getUid());
-                    startActivity(i);
-                    finish();
+                    if ((tvLatLon.getText().toString().equals("synced")) ){
+
+                        Intent i = new Intent(MainActivity.this, MakeRequest.class);
+                        i.putExtra("fullName", fullName);
+                        i.putExtra("phone", phone);
+                        i.putExtra("latitude", latitude);
+                        i.putExtra("longitude", longitude);
+                        i.putExtra("uID", mAuth.getCurrentUser().getUid());
+                        startActivity(i);
+                        finish();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Location Error!", Toast.LENGTH_SHORT).show();
+                        gps.showSettingsAlert();
+                    }
                 } else {
                     checkConnection();
                 }
@@ -313,7 +281,6 @@ public class MainActivity extends AppCompatActivity
             else
                 checkConnection();
 
-
         } else if (id == R.id.nav_log_out) {
             if (ConnectivityReceiver.isConnected()) {
                 FirebaseMessaging.getInstance().unsubscribeFromTopic(topics);
@@ -366,15 +333,21 @@ public class MainActivity extends AppCompatActivity
     protected void onRestart() {
         super.onRestart();
         checkSettingsData();
+        checkSettingsData();
+        gpsProgressBar.setVisibility(View.VISIBLE);
+        locationThread();
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        checkSettingsData();
         // register connection status listener
         MyApplication.getInstance().setConnectivityListener(this);
+
     }
+
 
     public String getTimeStamp() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a 'Date: 'dd-MM-yyyy ");
@@ -466,5 +439,87 @@ public class MainActivity extends AppCompatActivity
         showSnack(isConnected);
 
     }
+
+    public void locationThread() {
+        tvLatLon.setText("Searching..");
+        gps = new GPSTracker(MainActivity.this);
+
+        ha.postDelayed(new Runnable() {
+
+            @SuppressLint("NewApi")
+            @Override
+            public void run() {
+                //call function
+                if (gps.getLocation() == null) {
+                    gps.showSettingsAlert();
+                } else {
+
+                    // check if GPS enabled
+                    if (gps.canGetLocation() && gps.getLatitude() != 0) {
+                        latitude = gps.getLatitude();
+                        longitude = gps.getLongitude();
+                        gpsProgressBar.setVisibility(View.INVISIBLE);
+                        syncGPS();
+                        //removing this handler though not working
+//                        ha.removeCallbacksAndMessages(null);
+                    } else {
+                        // can't get location
+                        // GPS or Network is not enabled
+                        // Ask user to enable GPS/network in settings
+                        gps.showSettingsAlert();
+                    }
+                    if (gps.getLatitude() != 0.00)
+                        ha.postDelayed(this, 3000);
+                }
+            }
+
+        }, 3000);
+
+    }
+
+
+    public void syncGPS() {
+        if (gps.canGetLocation() && gps.getLatitude() != 0) {
+            gpsProgressBar.setVisibility(View.INVISIBLE);
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
+
+            //updating last lat long in firebase
+
+            DatabaseReference latRef = FirebaseDatabase.getInstance()
+                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
+                    .child("latitude");
+            latRef.setValue(String.valueOf(latitude));
+
+            DatabaseReference lonRef = FirebaseDatabase.getInstance()
+                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
+                    .child("longitude");
+            lonRef.setValue(String.valueOf(longitude));
+
+            DatabaseReference lastRef = FirebaseDatabase.getInstance()
+                    .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
+                    .child("lastEntry");
+            lastRef.setValue(String.valueOf(getTimeStamp()));
+            //saving to localDB for notifications
+            SharedPreferences.Editor editor = getSharedPreferences("gpsData", MODE_PRIVATE).edit();
+            editor.putString("dbLat", String.valueOf(latitude));
+            editor.putString("dbLon", String.valueOf(longitude));
+            editor.apply();
+            // \n is for new line
+            tvLatLon.setText("synced");
+            tvLatLon.setTextColor(Color.BLACK);
+            gpsProgressBar.setVisibility(View.INVISIBLE);
+
+
+        } else {
+            // can't get location
+            // GPS or Network is not enabled
+            // Ask user to enable GPS/network in settings
+            tvLatLon.setText("Error");
+            tvLatLon.setTextColor(Color.RED);
+            gps.showSettingsAlert();
+        }
+    }
+
 }
 

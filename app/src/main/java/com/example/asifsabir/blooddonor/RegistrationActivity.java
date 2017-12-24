@@ -1,6 +1,9 @@
 package com.example.asifsabir.blooddonor;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +15,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -29,18 +34,27 @@ import java.util.Date;
 
 
 public class RegistrationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
+    Button registerButton;
     String bloodGroupText = "";
     GPSTracker gps;
     double latOfSensor = 0, lonOfSensor = 0;
     String latitude = "", longitude = "";
     private FirebaseAuth mAuth;
+    final Handler ha = new Handler();
+    LinearLayout gpsSearchLayout,registrationLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //   FirebaseApp.initializeApp(getApplicationContext());
         setContentView(R.layout.activity_registration);
+        registerButton = (Button) findViewById(R.id.btn_register);
+
+
+        gpsSearchLayout = (LinearLayout) findViewById(R.id.layout_gps_search);
+        registrationLayout = (LinearLayout) findViewById(R.id.layout_registration);
+
+
         getSupportActionBar().setTitle("Register a new user");
         mAuth = FirebaseAuth.getInstance();
         Spinner spinner = (Spinner) findViewById(R.id.blood_group_spinner);
@@ -58,13 +72,14 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
         gps = new GPSTracker(RegistrationActivity.this);
 
         // check if GPS enabled
-        if (gps.canGetLocation()) {
-            gps.getLocation();
+        if (gps.canGetLocation() && gps.getLatitude() != 0) {
+
             latOfSensor = gps.getLatitude();
             lonOfSensor = gps.getLongitude();
 
+            //button enable kore dao
+
         } else {
-            Toast.makeText(getApplicationContext(), "Error getting location!", Toast.LENGTH_SHORT).show();
             // can't get location
             // GPS or Network is not enabled
             // Ask user to enable GPS/network in settings
@@ -76,7 +91,6 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
 
         final EditText name = (EditText) findViewById(R.id.et_name);
         final EditText phone = (EditText) findViewById(R.id.et_phone);
-        final Button registerButton = (Button) findViewById(R.id.btn_register);
         final Button changeButton = (Button) findViewById(R.id.btn_change_number);
 
         phone.setEnabled(false);
@@ -91,12 +105,10 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
             public void onClick(View view) {
                 final String nameText = name.getText().toString().trim();
                 final String phoneText = phone.getText().toString().trim();
-                if (latOfSensor == 0 || lonOfSensor == 0) {
-                    gps.getLocation();
-                    latOfSensor = gps.getLatitude();
-                    lonOfSensor = gps.getLongitude();
+                if (latOfSensor ==0) {
+                    gps.showSettingsAlert();
                     Toast.makeText(getApplicationContext(), "Error getting location!", Toast.LENGTH_LONG).show();
-                    Log.e("Error","location error1");
+                    Log.e("Error", "location error1");
                 } else {
                     latitude = String.valueOf(latOfSensor);
                     longitude = String.valueOf(lonOfSensor);
@@ -105,7 +117,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                 if (nameText.equals("") || phoneText.equals("") || bloodGroupText.equals("") || latitude.equals("") || longitude.equals("")) {
                     if (latitude.equals("") || longitude.equals("")) {
                         Toast.makeText(getApplicationContext(), "Error getting location!", Toast.LENGTH_LONG).show();
-                        Log.e("Error","location error2");
+                        Log.e("Error", "location error2");
                     } else {
 
                         Snackbar snackbar = Snackbar.make(view, "Unsuccessful! Fill all fields", Snackbar.LENGTH_LONG)
@@ -120,8 +132,6 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                     DatabaseReference myRef = database.getReference("Users").child(mAuth.getCurrentUser().getUid());
                     Register register = new Register(nameText, phoneText, bloodGroupText, latitude, longitude, getTimeStamp(), "false");
                     myRef.setValue(register);
-                    //              FirebaseMessaging.getInstance().subscribeToTopic(bloodGroupText.toString());
-
                     Toast.makeText(RegistrationActivity.this, "Successful Registration", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
                     finish();
@@ -140,6 +150,12 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        gpsSearchLayout.setVisibility(View.VISIBLE);
+        locationThread();
+    }
 
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
@@ -172,5 +188,46 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("'Time: 'KK:mm a 'Date: 'dd-MM-yyyy ");
         String format = simpleDateFormat.format(new Date());
         return format;
+    }
+
+
+    public void locationThread() {
+        gps = new GPSTracker(RegistrationActivity.this);
+
+        ha.postDelayed(new Runnable() {
+
+            @SuppressLint("NewApi")
+            @Override
+            public void run() {
+                //call function
+                if (gps.getLocation() == null) {
+                    gps.showSettingsAlert();
+                } else {
+
+                    // check if GPS enabled
+                    if (gps.canGetLocation() && gps.getLatitude() != 0) {
+                        latOfSensor = gps.getLatitude();
+                        lonOfSensor = gps.getLongitude();
+                        gpsSearchLayout.setVisibility(View.GONE);
+
+                        Snackbar snackbar = Snackbar.make(registrationLayout, "Location found successfully!", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null);
+                        View sbView = snackbar.getView();
+                        sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorBlue));
+                        snackbar.show();
+
+                    } else {
+                        // can't get location
+                        // GPS or Network is not enabled
+                        // Ask user to enable GPS/network in settings
+                        gps.showSettingsAlert();
+                    }
+                    if (gps.getLatitude() == 0)
+                        ha.postDelayed(this, 3000);
+                }
+            }
+
+        }, 3000);
+
     }
 }

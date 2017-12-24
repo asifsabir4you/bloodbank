@@ -60,7 +60,7 @@
             android:id="@+id/et_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="patient's Location\nAddress / details"
+            android:hint="Patient's Location/ Address / details"
             />
 
         <Button
@@ -68,6 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Request"
+            android:layout_marginTop="15dp"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/colorPrimaryDark"
           />

@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_main_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
     android:gravity="left"
     android:orientation="vertical"
     android:padding="10dp"
-    android:id="@+id/layout_main_activity"
     android:paddingLeft="15dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.asifsabir.blooddonor.MainActivity"
@@ -147,8 +147,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="lattitude: - - - \nlongitude: - - - "
+                android:text="searching..."
                 android:textSize="20dp" />
+
+            <ProgressBar
+                android:id="@+id/gps_progressbar"
+                android:layout_width="25dp"
+                android:visibility="invisible"
+                android:layout_height="25dp"
+                android:layout_gravity="center" />
         </LinearLayout>
 
         <LinearLayout
@@ -192,17 +199,14 @@
             android:visibility="gone" />
 
 
-
-
-            <TextView
-                android:id="@+id/tv_timer"
-                android:visibility="gone"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:layout_marginTop="25dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"
-                 />
+        <TextView
+            android:id="@+id/tv_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="25dp"
+            android:gravity="center"
+            android:textColor="@color/colorPrimaryDark"
+            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>
