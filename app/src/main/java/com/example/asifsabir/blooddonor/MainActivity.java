@@ -8,7 +8,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -46,9 +48,9 @@ import java.util.Date;
  */
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ConnectivityReceiver.ConnectivityReceiverListener {
 
-
+    LinearLayout layoutMainActivity;
     private static final int REQUEST_CODE_PERMISSION = 2;
     long lastReqTimeLong;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        layoutMainActivity = (LinearLayout) findViewById(R.id.layout_main_activity);
         progressBar = (ProgressBar) findViewById(R.id.pb_loading);
         tvFullName = (TextView) findViewById(R.id.tv_full_name);
         tvPhone = (TextView) findViewById(R.id.tv_phone);
@@ -82,7 +85,17 @@ public class MainActivity extends AppCompatActivity
         userDataLayout = (LinearLayout) findViewById(R.id.layout_user_area);
         suspendLayout = (LinearLayout) findViewById(R.id.layout_suspend);
 
+        if(!ConnectivityReceiver.isConnected()){
+            checkConnection();
+        }
+
+
+
         mAuth = FirebaseAuth.getInstance();
+
+
+
+
 
         //subscribing to that blood group topics
         //checking settings
@@ -220,14 +233,18 @@ public class MainActivity extends AppCompatActivity
         {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, MakeRequest.class);
-                i.putExtra("fullName", fullName);
-                i.putExtra("phone", phone);
-                i.putExtra("latitude", latitude);
-                i.putExtra("longitude", longitude);
-                i.putExtra("uID", mAuth.getCurrentUser().getUid());
-                startActivity(i);
-                finish();
+                if (ConnectivityReceiver.isConnected()) {
+                    Intent i = new Intent(MainActivity.this, MakeRequest.class);
+                    i.putExtra("fullName", fullName);
+                    i.putExtra("phone", phone);
+                    i.putExtra("latitude", latitude);
+                    i.putExtra("longitude", longitude);
+                    i.putExtra("uID", mAuth.getCurrentUser().getUid());
+                    startActivity(i);
+                    finish();
+                } else {
+                    checkConnection();
+                }
             }
         });
 
@@ -281,18 +298,31 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_my_req) {
-            startActivity(new Intent(getApplicationContext(), MyReqActivity.class));
+            if (ConnectivityReceiver.isConnected())
+                startActivity(new Intent(getApplicationContext(), MyReqActivity.class));
+            else
+                checkConnection();
         } else if (id == R.id.nav_map) {
-            startActivity(new Intent(getApplicationContext(), ShowDonorsMapActivity.class));
+            if (ConnectivityReceiver.isConnected())
+                startActivity(new Intent(getApplicationContext(), ShowDonorsMapActivity.class));
+            else
+                checkConnection();
         } else if (id == R.id.nav_saved_req) {
-            startActivity(new Intent(getApplicationContext(), SavedReqActivity.class));
+            if (ConnectivityReceiver.isConnected())
+                startActivity(new Intent(getApplicationContext(), SavedReqActivity.class));
+            else
+                checkConnection();
 
 
         } else if (id == R.id.nav_log_out) {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(topics);
-            mAuth.signOut();
-            startActivity(new Intent(MainActivity.this, PhoneAuthActivity.class));
-            finish();
+            if (ConnectivityReceiver.isConnected()) {
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(topics);
+                mAuth.signOut();
+                startActivity(new Intent(MainActivity.this, PhoneAuthActivity.class));
+                finish();
+            } else
+                checkConnection();
+
         } else if (id == R.id.nav_fb) {
             Uri uri = Uri.parse("https://web.facebook.com/groups/713171778879956/"); // missing 'http://' will cause crashed
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -342,6 +372,8 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         checkSettingsData();
+        // register connection status listener
+        MyApplication.getInstance().setConnectivityListener(this);
     }
 
     public String getTimeStamp() {
@@ -365,17 +397,16 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     String lastReqTime = dataSnapshot.getValue(String.class);
-                    if(lastReqTime!=null){
+                    if (lastReqTime != null) {
                         lastReqTimeLong = Long.parseLong(lastReqTime);
-                        Log.d("time",lastReqTime);
+                        Log.d("time", lastReqTime);
 
                         if (lastReqTimeLong + 24 * 60 * 60 * 1000 > System.currentTimeMillis()) {
                             showTimer();
                         } else {
                             makeReqBtn.setVisibility(View.VISIBLE);
                         }
-                    }
-                    else{
+                    } else {
                         //never made a request ; open
                         makeReqBtn.setVisibility(View.VISIBLE);
 
@@ -394,12 +425,46 @@ public class MainActivity extends AppCompatActivity
 
     private void showTimer() {
         tvTimer.setVisibility(View.VISIBLE);
-        long timeDiffInMilliseconds =  (lastReqTimeLong + 24 * 60 * 60 * 1000 - System.currentTimeMillis());
+        long timeDiffInMilliseconds = (lastReqTimeLong + 24 * 60 * 60 * 1000 - System.currentTimeMillis());
 
         //  int seconds = (int) (timeInMilliseconds / 1000) % 60 ;
         long minutes = ((timeDiffInMilliseconds / (1000 * 60)) % 60);
         long hours = ((timeDiffInMilliseconds / (1000 * 60 * 60)) % 24);
-        tvTimer.setText("please wait "+hours + " hours " + minutes + " minutes \n"+"for making further requests.");
+        tvTimer.setText("please wait " + hours + " hours " + minutes + " minutes \n" + "for making further requests.");
+    }
+
+    // Method to manually check connection status
+    private void checkConnection() {
+        boolean isConnected = ConnectivityReceiver.isConnected();
+        showSnack(isConnected);
+    }
+
+    // Showing the status in Snackbar
+    private void showSnack(boolean isConnected) {
+        String message;
+        if (isConnected) {
+            message = "Good! Connected to Internet";
+        } else {
+            message = "Sorry! Not connected to internet";
+        }
+
+        Snackbar snackbar = Snackbar.make(layoutMainActivity, message, Snackbar.LENGTH_LONG)
+                .setAction("Action", null);
+        View sbView = snackbar.getView();
+
+        if (isConnected)
+            sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorGreen));
+        else
+            sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
+
+        snackbar.show();
+
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        showSnack(isConnected);
+
     }
 }
 

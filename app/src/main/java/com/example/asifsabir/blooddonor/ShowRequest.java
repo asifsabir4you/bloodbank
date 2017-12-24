@@ -22,8 +22,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -65,7 +67,8 @@ public class ShowRequest extends AppCompatActivity implements OnMapReadyCallback
     GPSTracker gps;
     FirebaseAuth mAuth;
     //add ad ad ad ad ad
-    private AdView mAdView;
+    private InterstitialAd mInterstitialAd;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,10 +84,19 @@ public class ShowRequest extends AppCompatActivity implements OnMapReadyCallback
 
         //firebase database for saving
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        //banner
-        mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+
+        //interstitial ad view on req show
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        // Begin listening to interstitial & show ads.
+        mInterstitialAd.setAdListener(new AdListener() {
+            public void onAdLoaded() {
+                mInterstitialAd.show();
+            }
+        });
+
+
 
         nametext = (TextView) findViewById(R.id.name);
         bloodGroupText = (TextView) findViewById(R.id.blood_group);
@@ -211,7 +223,7 @@ public class ShowRequest extends AppCompatActivity implements OnMapReadyCallback
                 View sbView = snackbar.getView();
                 sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorGreen));
                 snackbar.show();
-                btnSaveReq.setVisibility(View.GONE);
+                btnSaveReq.setVisibility(View.INVISIBLE);
 
             }
         });

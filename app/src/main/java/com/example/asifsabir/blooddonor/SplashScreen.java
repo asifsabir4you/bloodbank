@@ -16,11 +16,14 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,10 +36,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class SplashScreen extends Activity {
+public class SplashScreen extends Activity implements  ConnectivityReceiver.ConnectivityReceiverListener {
     public static int status = 5; //0 for not auth; 1 for auth; 2 for registered;
     private FirebaseAuth mAuth;
     ImageView bloodDrop;
+    LinearLayout layoutSplash;
     Animation dropletAnim, appNameAnim;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 2;
     // Splash screen timer
@@ -44,6 +48,7 @@ public class SplashScreen extends Activity {
     TextView tvBottom;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
     TextView appName;
+    ProgressBar splashProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +58,18 @@ public class SplashScreen extends Activity {
         appName = (TextView) findViewById(R.id.tv_appName);
         tvBottom = (TextView) findViewById(R.id.tv_bottom_tag);
 
+        splashProgressBar = (ProgressBar)findViewById(R.id.splash_progressbar);
+
+        layoutSplash = (LinearLayout)findViewById(R.id.layout_splash);
         dropletAnim = AnimationUtils.loadAnimation(this, R.anim.blood_drop_anim);
         appNameAnim = AnimationUtils.loadAnimation(this, R.anim.app_name_anim);
         bloodDrop.setAnimation(dropletAnim);
         appName.setAnimation(appNameAnim);
 
+        //checking internet
+
+        if(!ConnectivityReceiver.isConnected())
+            checkConnection();
 
         gps = new GPSTracker(SplashScreen.this);
 
@@ -67,6 +79,12 @@ public class SplashScreen extends Activity {
             new PrefetchData().execute();
         }
 
+
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        showSnack(isConnected);
 
     }
 
@@ -100,6 +118,13 @@ public class SplashScreen extends Activity {
         }
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // register connection status listener
+        MyApplication.getInstance().setConnectivityListener(this);
     }
 
     @Override
@@ -233,6 +258,36 @@ public class SplashScreen extends Activity {
                 finish();
             }
         }, 1000);
+    }
+    // Showing the status in Snackbar
+    private void showSnack(boolean isConnected) {
+        String message;
+        if (isConnected) {
+            message = "Connection established!";
+            tvBottom.setText("Checking user data...");
+            splashProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            message = "NO internet! Enable mobile data/ wifi";
+            tvBottom.setText("Error! No internet.");
+            splashProgressBar.setVisibility(View.GONE);
+        }
+
+        Snackbar snackbar = Snackbar.make(layoutSplash,message, Snackbar.LENGTH_LONG)
+                .setAction("Action", null);
+        View sbView = snackbar.getView();
+
+        if(isConnected)
+            sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorGreen));
+        else
+            sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
+
+        snackbar.show();
+
+    }
+    // Method to manually check connection status
+    private void checkConnection() {
+        boolean isConnected = ConnectivityReceiver.isConnected();
+        showSnack(isConnected);
     }
 
 }

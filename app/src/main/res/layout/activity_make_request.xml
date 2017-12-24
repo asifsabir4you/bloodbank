@@ -46,7 +46,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Enter a blood group:  "
+                android:text="Select blood group:  "
                 android:textSize="20dp" />
 
             <Spinner
@@ -60,8 +60,7 @@
             android:id="@+id/et_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="patient's Location"
-
+            android:hint="patient's Location\nAddress / details"
             />
 
         <Button
