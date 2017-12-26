@@ -13,16 +13,12 @@
         android:padding="10dp"
         tools:context="com.example.asifsabir.blooddonor.MakeRequest">
 
-        <TextView
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/user"
             android:layout_gravity="center"
-            android:fontFamily="cursive"
-            android:padding="15dp"
-            android:text=" Register"
-            android:textColor="@android:color/holo_red_light"
-            android:textSize="40dp"
-            android:textStyle="bold" />
+            />
 
         <LinearLayout
             android:visibility="gone"
@@ -33,6 +29,7 @@
             android:layout_height="wrap_content">
 
             <ProgressBar
+                android:layout_marginTop="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" />
@@ -44,6 +41,7 @@
         </LinearLayout>
 
         <EditText
+            android:layout_marginTop="20dp"
             android:id="@+id/et_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
