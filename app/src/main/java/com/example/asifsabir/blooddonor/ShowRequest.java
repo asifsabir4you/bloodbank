@@ -89,7 +89,7 @@ public class ShowRequest extends AppCompatActivity implements OnMapReadyCallback
         mInterstitialAd = new InterstitialAd(this);
         // demo: ca-app-pub-3940256099942544/1033173712
         //showreqAd: ca-app-pub-9816854223245104/6041567935
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.setAdUnitId("ca-app-pub-9816854223245104/6041567935");
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
         // Begin listening to interstitial & show ads.
         mInterstitialAd.setAdListener(new AdListener() {

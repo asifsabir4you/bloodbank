@@ -4,9 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@mipmap/splash_background"
     tools:context=".SavedReqActivity">
-
+<TextView
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:paddingTop="20dp"
+    android:text="Nothing saved yet."
+    android:layout_height="wrap_content" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="fill_parent"
