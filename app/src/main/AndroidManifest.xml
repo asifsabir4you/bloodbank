@@ -34,13 +34,14 @@
         </receiver>
 
 
-
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <activity
             android:name=".SplashScreen"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,16 +50,34 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ShowRequest"></activity>
-        <activity android:name=".MakeRequest"></activity>
-        <activity android:name=".PhoneAuthActivity"></activity>
+        <activity
+            android:name=".ShowRequest"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".MakeRequest"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".PhoneAuthActivity"
+            android:screenOrientation="portrait"></activity>
 
-        <activity android:name=".AboutPage"></activity>
-        <activity android:name=".RegistrationActivity"></activity>
-        <activity android:name=".SettingsActivity"></activity>
-        <activity android:name=".MyReqActivity"></activity>
-        <activity android:name=".SavedReqActivity"></activity>
-        <activity android:name=".ShowDonorsMapActivity"></activity>
+        <activity
+            android:name=".AboutPage"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".RegistrationActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".MyReqActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".SavedReqActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ShowDonorsMapActivity"
+            android:screenOrientation="portrait"></activity>
 
     </application>
 

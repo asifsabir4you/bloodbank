@@ -31,6 +31,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.common.api.BooleanResult;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -68,7 +71,8 @@ public class MainActivity extends AppCompatActivity
     boolean userBan;
     String topics;
     final Handler ha = new Handler();
-
+    //add ad ad ad ad ad
+    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +97,18 @@ public class MainActivity extends AppCompatActivity
         if (!ConnectivityReceiver.isConnected()) {
             checkConnection();
         }
+
+        //interstitial ad view on req show
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        // Begin listening to interstitial & show ads.
+        mInterstitialAd.setAdListener(new AdListener() {
+            public void onAdLoaded() {
+                mInterstitialAd.show();
+            }
+        });
+
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -196,7 +212,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if (ConnectivityReceiver.isConnected()) {
-                    if ((tvLatLon.getText().toString().equals("synced")) ){
+                    if ((tvLatLon.getText().toString().equals("synced"))) {
 
                         Intent i = new Intent(MainActivity.this, MakeRequest.class);
                         i.putExtra("fullName", fullName);
@@ -441,7 +457,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void locationThread() {
-        tvLatLon.setText("Searching..");
+
+        if (tvLatLon.getText().toString().equals("synced"))
+            gpsProgressBar.setVisibility(View.INVISIBLE);
+        else
+            tvLatLon.setText("searching...");
+
         gps = new GPSTracker(MainActivity.this);
 
         ha.postDelayed(new Runnable() {
@@ -449,6 +470,8 @@ public class MainActivity extends AppCompatActivity
             @SuppressLint("NewApi")
             @Override
             public void run() {
+
+
                 //call function
                 if (gps.getLocation() == null) {
                     gps.showSettingsAlert();
@@ -468,8 +491,8 @@ public class MainActivity extends AppCompatActivity
                         // Ask user to enable GPS/network in settings
                         gps.showSettingsAlert();
                     }
-                    if (gps.getLatitude() != 0.00)
-                        ha.postDelayed(this, 3000);
+//                    if (gps.getLatitude() != 0.00)
+//                        ha.postDelayed(this, 3000);
                 }
             }
 
