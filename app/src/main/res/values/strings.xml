@@ -37,4 +37,27 @@
     <string name="start_phone_auth">Send</string>
     <string name="verify_phone_auth">Verify</string>
     <string name="resend_phone_auth">Resend</string>
+
+    <!-- for into texts -->
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Hello Hero!</string>
+    <string name="slide_1_desc">Welcome to Bangladeshi realtime blood donation platform!\n Register to be a donor and requester!</string>
+
+    <string name="slide_2_title">Search donors</string>
+    <string name="slide_2_desc">Check donors with name and blood group around you on map!</string>
+
+    <string name="slide_3_title">Send Requests</string>
+    <string name="slide_3_desc">Make a request and donors will get notifications along with your location and details!</string>
+
+    <string name="slide_4_title">Respond to requests</string>
+    <string name="slide_4_desc">Click notifications to see blood group, location of requester on map and make calls!</string>
+
+
+
+
+
 </resources>

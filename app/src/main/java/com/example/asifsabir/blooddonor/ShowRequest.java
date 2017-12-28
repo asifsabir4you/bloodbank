@@ -87,6 +87,8 @@ public class ShowRequest extends AppCompatActivity implements OnMapReadyCallback
 
         //interstitial ad view on req show
         mInterstitialAd = new InterstitialAd(this);
+        // demo: ca-app-pub-3940256099942544/1033173712
+        //showreqAd: ca-app-pub-9816854223245104/6041567935
         mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
         // Begin listening to interstitial & show ads.
@@ -243,7 +245,6 @@ public class ShowRequest extends AppCompatActivity implements OnMapReadyCallback
             if (ContextCompat.checkSelfPermission(ShowRequest.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(ShowRequest.this, new String[]{android.Manifest.permission.CALL_PHONE}, 1); //1 for phone call
             } else {
-
                 makeCall(phone);
             }
         }

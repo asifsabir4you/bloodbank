@@ -113,7 +113,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setContentTitle("Blood wanted: " + bloodGroup)
-                .setSmallIcon(R.drawable.blood_drop)
+                .setSmallIcon(R.drawable.notification_icon)
                 .setContentText("By: " + name + " At: " + location)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)

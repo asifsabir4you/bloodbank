@@ -105,7 +105,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
             public void onCodeSent(String verificationId,
                                    PhoneAuthProvider.ForceResendingToken token) {
                 //showing a snackbar
-                Snackbar snackbar = Snackbar.make(linearLayout, "Code sent!", Snackbar.LENGTH_SHORT)
+                Snackbar snackbar = Snackbar.make(linearLayout, "sms sent!", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null);
                 View sbView = snackbar.getView();
                 sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorGreen));
@@ -144,7 +144,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
 
     private void startPhoneNumberVerification(String phoneNumber) {
         //showing a snackbar
-        Snackbar snackbar = Snackbar.make(linearLayout, "Sending Code! Please wait!", Snackbar.LENGTH_LONG)
+        Snackbar snackbar = Snackbar.make(linearLayout, "Sending sms! Please wait!", Snackbar.LENGTH_LONG)
                 .setAction("Action", null);
         View sbView = snackbar.getView();
         sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorBlue));

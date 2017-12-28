@@ -100,6 +100,8 @@ public class MainActivity extends AppCompatActivity
 
         //interstitial ad view on req show
         mInterstitialAd = new InterstitialAd(this);
+        // demo: ca-app-pub-3940256099942544/1033173712
+        //homeAd: ca-app-pub-9816854223245104/8991288612
         mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
         // Begin listening to interstitial & show ads.
@@ -311,7 +313,15 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
             finish();
-        } else if (id == R.id.nav_share) {
+        }
+        else if (id == R.id.nav_rate) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.example.asifsabir.blooddonor")));
+
+            finish();
+        }
+
+
+        else if (id == R.id.nav_share) {
             Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
             String shareBody = "Want to be a part of noble work? Be a blood donor.Or search donor around you.\n IT'S FREE!\n\ndownload link:\n";

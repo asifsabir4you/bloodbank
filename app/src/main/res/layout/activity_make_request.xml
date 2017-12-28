@@ -17,12 +17,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="cursive"
+            android:fontFamily="sans-serif-condensed"
             android:padding="15dp"
-            android:text="Make Blood Request"
+            android:text="Make A blood Request"
             android:textColor="@android:color/holo_red_light"
-            android:textSize="40dp"
-            android:textStyle="bold" />
+            android:textSize="35dp"
+            />
 
         <EditText
             android:id="@+id/et_name"
@@ -60,7 +60,7 @@
             android:id="@+id/et_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Patient's Location/ Address/ Details"
+            android:hint="Patient's Location/ Hospital/ Details"
             />
 
         <Button
