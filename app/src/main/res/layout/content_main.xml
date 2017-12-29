@@ -11,7 +11,7 @@
     android:padding="10dp"
     android:paddingLeft="15dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.asifsabir.blooddonor.MainActivity"
+    tools:context="com.bytebiters.asifsabir.blooddonor.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
     <LinearLayout

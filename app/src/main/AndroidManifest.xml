@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.asifsabir.blooddonor">
+    package="com.bytebiters.asifsabir.blooddonor">
 
     <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".MyApplication"
+        android:name="com.bytebiters.asifsabir.blooddonor.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
@@ -19,14 +19,14 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCdAIgQezzRP260GI56dABQHMvJsoocTOs" />
 
-        <service android:name=".MyFirebaseMessagingService">
+        <service android:name="com.bytebiters.asifsabir.blooddonor.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
         <receiver
-            android:name=".ConnectivityReceiver"
+            android:name="com.bytebiters.asifsabir.blooddonor.ConnectivityReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -35,12 +35,12 @@
 
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.bytebiters.asifsabir.blooddonor.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <activity
-            android:name=".WelcomeActivity"
+            android:name="com.bytebiters.asifsabir.blooddonor.WelcomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -51,35 +51,35 @@
         </activity>
 
         <activity
-            android:name=".SplashScreen"
+            android:name="com.bytebiters.asifsabir.blooddonor.SplashScreen"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".ShowRequest"
+            android:name="com.bytebiters.asifsabir.blooddonor.ShowRequest"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".MakeRequest"
+            android:name="com.bytebiters.asifsabir.blooddonor.MakeRequest"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".PhoneAuthActivity"
+            android:name="com.bytebiters.asifsabir.blooddonor.PhoneAuthActivity"
             android:screenOrientation="portrait"></activity>
 
         <activity
-            android:name=".AboutPage"
+            android:name="com.bytebiters.asifsabir.blooddonor.AboutPage"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".RegistrationActivity"
+            android:name="com.bytebiters.asifsabir.blooddonor.RegistrationActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name="com.bytebiters.asifsabir.blooddonor.SettingsActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".MyReqActivity"
+            android:name="com.bytebiters.asifsabir.blooddonor.MyReqActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".SavedReqActivity"
+            android:name="com.bytebiters.asifsabir.blooddonor.SavedReqActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".ShowDonorsMapActivity"
+            android:name="com.bytebiters.asifsabir.blooddonor.ShowDonorsMapActivity"
             android:screenOrientation="portrait"></activity>
 
     </application>
