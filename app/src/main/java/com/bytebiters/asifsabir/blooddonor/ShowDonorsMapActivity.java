@@ -112,8 +112,10 @@ public class ShowDonorsMapActivity extends AppCompatActivity implements OnMapRea
         googleMap.addCircle(new CircleOptions()
                 .center(YourPosition)
                 .radius(50000)
-                .strokeColor(Color.RED));
-        //  .fillColor(R.color.background));
+                .strokeWidth(2)
+                .strokeColor(Color.RED)
+                .fillColor(0x25FF0000));  //0x :hexa code ; 60 is % ; last 6 digit is color code
+
         mMarker.showInfoWindow();
         CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(YourPosition, 9);
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(YourPosition));

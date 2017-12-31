@@ -136,7 +136,7 @@ public class ShowRequest extends AppCompatActivity implements OnMapReadyCallback
             DatabaseReference lonRef = FirebaseDatabase.getInstance()
                     .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
                     .child("longitude");
-            lonRef.setValue(String.valueOf(latitude));
+            lonRef.setValue(String.valueOf(longitude));
 
             DatabaseReference lastRef = FirebaseDatabase.getInstance()
                     .getReference("Users").child(mAuth.getCurrentUser().getUid().toString())
